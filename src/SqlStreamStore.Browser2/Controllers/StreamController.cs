@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SqlStreamStore.Browser2.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/streams")]
     public class StreamsController : ControllerBase
     {
         private readonly ILogger<StreamsController> _logger;
