@@ -8,15 +8,12 @@ namespace SqlStreamStore.Browser2.DevServer
     internal class DevServerStartup : IStartup
     {
         private readonly IStreamStore _streamStore;
-        // private readonly SqlStreamStoreMiddlewareOptions _options;
 
         public DevServerStartup(
             IStreamStore streamStore
-            // SqlStreamStoreMiddlewareOptions options
         )
         {
             _streamStore = streamStore;
-            // _options = options;
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services) => services

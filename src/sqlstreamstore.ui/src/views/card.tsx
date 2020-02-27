@@ -1,13 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
 
 interface Props {
   children?: JSX.Element | JSX.Element[];
-  // action?: JSX.Element | JSX.Element[];
 }
 
 const useStyles = makeStyles({
@@ -23,9 +20,6 @@ const DashboardCard = (props: Props) => {
       <CardContent>
         {props.children}
       </CardContent>
-      {/* <CardActions>
-        { props.action }
-      </CardActions> */}
     </Card>
   );
 };
