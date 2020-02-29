@@ -64,7 +64,7 @@ const Dashboard = () => {
           </Card>
           <Card>
             <Typography color="textSecondary" gutterBottom># messages</Typography>
-            <Typography gutterBottom variant="h3">17.463</Typography>
+            <Typography gutterBottom variant="h3">46.875</Typography>
           </Card>
         </div>
       </Paper>
