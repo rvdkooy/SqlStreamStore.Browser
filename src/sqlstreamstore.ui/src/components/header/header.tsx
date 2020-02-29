@@ -14,7 +14,7 @@ const Header = () => {
         <HomeIcon /> 
       </IconButton>
       <Typography variant="h6">
-        Sql stream store browser
+        SqlStreamStore browser
       </Typography>
     </Toolbar>
   </AppBar >);
