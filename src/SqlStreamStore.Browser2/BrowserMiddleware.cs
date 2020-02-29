@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -15,13 +16,19 @@ namespace SqlStreamStore.Browser2
             if(builder == null)
                 throw new ArgumentNullException(nameof(builder));
             
-            var staticFilesDir = Path.Combine(Directory.GetCurrentDirectory(), "../sqlstreamstore.ui/build/static");
+            var currentAssembly = System.Reflection.Assembly.GetAssembly(typeof(Browser2Startup));
+            string currentDir = Path.GetDirectoryName(currentAssembly.Location);
+            
+            var staticFilesDir = Path.Combine(currentDir, "../../../../sqlstreamstore.ui/build");
 
             return builder
+                .UseDefaultFiles(new DefaultFilesOptions()
+                {
+                    FileProvider = new EmbeddedFileProvider(currentAssembly, "SqlStreamStore.Browser2"),
+                })
                 .UseStaticFiles(new StaticFileOptions()
                 {
-                    FileProvider = new PhysicalFileProvider(staticFilesDir),
-                    RequestPath = "/"
+                    FileProvider = new EmbeddedFileProvider(currentAssembly, "SqlStreamStore.Browser2"),
                 })
                 .UseMvc();
         }
