@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using SqlStreamStore.Streams;
 
 namespace SqlStreamStore.Browser2.Controllers
 {
@@ -23,7 +24,7 @@ namespace SqlStreamStore.Browser2.Controllers
         [HttpGet]
         public async Task<IEnumerable<Stream>> Get()
         {
-            return (await _streamStore.ReadAllForwards(0, 100))
+            return (await _streamStore.ReadAllBackwards(Position.End, 100))
                 .Messages.Select(message => new Stream()
                 {
                     StreamId = message.StreamId,

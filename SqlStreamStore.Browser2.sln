@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2.DevServer", "src\SqlStreamStore.Browser2.DevServer\SqlStreamStore.Browser2.DevServer.csproj", "{3B3A5799-8BE4-4E29-BECA-ECDC925C4E71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2.Tests", "src\SqlStreamStore.Browser2.Tests\SqlStreamStore.Browser2.Tests.csproj", "{7FE345A3-A4E3-4160-B364-14D590F3DB31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,9 +48,22 @@ Global
 		{3B3A5799-8BE4-4E29-BECA-ECDC925C4E71}.Release|x64.Build.0 = Release|Any CPU
 		{3B3A5799-8BE4-4E29-BECA-ECDC925C4E71}.Release|x86.ActiveCfg = Release|Any CPU
 		{3B3A5799-8BE4-4E29-BECA-ECDC925C4E71}.Release|x86.Build.0 = Release|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Debug|x64.Build.0 = Debug|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Debug|x86.Build.0 = Debug|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|x64.ActiveCfg = Release|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|x64.Build.0 = Release|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|x86.ActiveCfg = Release|Any CPU
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{95D21E5E-9919-459F-8A0D-1853F8682FAA} = {201619A5-C1FF-43A1-A64A-2C41174A2D23}
 		{3B3A5799-8BE4-4E29-BECA-ECDC925C4E71} = {201619A5-C1FF-43A1-A64A-2C41174A2D23}
+		{7FE345A3-A4E3-4160-B364-14D590F3DB31} = {201619A5-C1FF-43A1-A64A-2C41174A2D23}
 	EndGlobalSection
 EndGlobal

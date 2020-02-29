@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   cardContainer: {
     marginTop: '50px',
+    marginBottom: '150px',
     display: 'flex',
     justifyContent: 'space-between',
   },
