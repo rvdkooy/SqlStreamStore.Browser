@@ -1,6 +1,8 @@
 using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 
 namespace SqlStreamStore.Browser2
 {
@@ -12,8 +14,15 @@ namespace SqlStreamStore.Browser2
         {
             if(builder == null)
                 throw new ArgumentNullException(nameof(builder));
+            
+            var staticFilesDir = Path.Combine(Directory.GetCurrentDirectory(), "../sqlstreamstore.ui/build/static");
 
             return builder
+                .UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new PhysicalFileProvider(staticFilesDir),
+                    RequestPath = "/"
+                })
                 .UseMvc();
         }
         public static IServiceCollection AddSqlStreamStoreBrowser(
