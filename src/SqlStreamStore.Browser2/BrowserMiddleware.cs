@@ -21,7 +21,7 @@ namespace SqlStreamStore.Browser2
                 .UseStaticFiles(new StaticFileOptions()
                 {
                     FileProvider = new PhysicalFileProvider(staticFilesDir),
-                    RequestPath = "/staticfiles"
+                    RequestPath = "/"
                 })
                 .UseMvc();
         }
