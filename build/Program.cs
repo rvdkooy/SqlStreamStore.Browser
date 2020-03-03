@@ -45,7 +45,7 @@ namespace build
                 DependsOn(DotnetTest),
                 () => {
                     try {
-                        Run("cmd", "--cwd ./src/sqlstreamstore.ui test --watchAll=false");
+                        Run("yarn", "--cwd ./src/sqlstreamstore.ui test --watchAll=false");
                     }
                     catch (NonZeroExitCodeException)
                     {
