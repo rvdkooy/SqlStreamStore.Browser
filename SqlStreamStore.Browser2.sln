@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2.Dev
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2.Tests", "src\SqlStreamStore.Browser2.Tests\SqlStreamStore.Browser2.Tests.csproj", "{7FE345A3-A4E3-4160-B364-14D590F3DB31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2.Build", "src\SqlStreamStore.Browser2.Build\SqlStreamStore.Browser2.Build.csproj", "{D1B454F9-BF5B-4FE3-967D-D0B01527639A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,10 +62,23 @@ Global
 		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|x64.Build.0 = Release|Any CPU
 		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|x86.ActiveCfg = Release|Any CPU
 		{7FE345A3-A4E3-4160-B364-14D590F3DB31}.Release|x86.Build.0 = Release|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Debug|x64.Build.0 = Debug|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Debug|x86.Build.0 = Debug|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Release|x64.ActiveCfg = Release|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Release|x64.Build.0 = Release|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Release|x86.ActiveCfg = Release|Any CPU
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{95D21E5E-9919-459F-8A0D-1853F8682FAA} = {201619A5-C1FF-43A1-A64A-2C41174A2D23}
 		{3B3A5799-8BE4-4E29-BECA-ECDC925C4E71} = {201619A5-C1FF-43A1-A64A-2C41174A2D23}
 		{7FE345A3-A4E3-4160-B364-14D590F3DB31} = {201619A5-C1FF-43A1-A64A-2C41174A2D23}
+		{D1B454F9-BF5B-4FE3-967D-D0B01527639A} = {201619A5-C1FF-43A1-A64A-2C41174A2D23}
 	EndGlobalSection
 EndGlobal
