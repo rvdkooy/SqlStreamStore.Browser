@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using SqlStreamStore.Streams;
 
-namespace SqlStreamStore.Browser2.Controllers
+namespace SqlStreamStore.Browser.Controllers
 {
     [ApiController]
     [Route("/api/streams")]

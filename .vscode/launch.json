@@ -11,9 +11,9 @@
              "request": "launch",
              "preLaunchTask": "build",
              // If you have changed target frameworks, make sure to update the program path.
-             "program": "${workspaceFolder}/src/SqlStreamStore.Browser2.DevServer/bin/Debug/netcoreapp2.1/SqlStreamStore.Browser2.DevServer.dll",
+             "program": "${workspaceFolder}/src/SqlStreamStore.Browser.DevServer/bin/Debug/netcoreapp2.1/SqlStreamStore.Browser.DevServer.dll",
              "args": [],
-             "cwd": "${workspaceFolder}/src/SqlStreamStore.Browser2.DevServer",
+             "cwd": "${workspaceFolder}/src/SqlStreamStore.Browser.DevServer",
              // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
              "console": "internalConsole",
              "stopAtEntry": false

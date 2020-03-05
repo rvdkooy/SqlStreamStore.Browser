@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "SqlStreamStore.Browser2": {
+    "SqlStreamStore.Browser": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",

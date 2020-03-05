@@ -25,7 +25,7 @@ namespace build
                 DotnetTest,
                 DependsOn(Build),
                 ForEach(    
-                    "SqlStreamStore.Browser2.Tests"
+                    "SqlStreamStore.Browser.Tests"
                 ), 
                 project =>
                 {
@@ -58,7 +58,7 @@ namespace build
                 Pack,
                 DependsOn(YarnTest),
                 ForEach(
-                    "SqlStreamStore.Browser2"
+                    "SqlStreamStore.Browser"
                 ),
                 project => Run("dotnet", $"pack src/{project}/{project}.csproj -c Release -o ./{ArtifactsDir} --no-build"));
 

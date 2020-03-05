@@ -1,7 +1,7 @@
-namespace SqlStreamStore.Browser2.Tests
+namespace SqlStreamStore.Browser.Tests
 {
     using Xunit;
-    using SqlStreamStore.Browser2.Controllers;
+    using SqlStreamStore.Browser.Controllers;
     using System.Linq;
     using SqlStreamStore.Streams;
     using System;

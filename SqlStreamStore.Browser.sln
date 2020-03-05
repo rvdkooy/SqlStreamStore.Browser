@@ -5,13 +5,13 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{201619A5-C1FF-43A1-A64A-2C41174A2D23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2", "src\SqlStreamStore.Browser2\SqlStreamStore.Browser2.csproj", "{95D21E5E-9919-459F-8A0D-1853F8682FAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser", "src\SqlStreamStore.Browser\SqlStreamStore.Browser.csproj", "{95D21E5E-9919-459F-8A0D-1853F8682FAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2.DevServer", "src\SqlStreamStore.Browser2.DevServer\SqlStreamStore.Browser2.DevServer.csproj", "{3B3A5799-8BE4-4E29-BECA-ECDC925C4E71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser.DevServer", "src\SqlStreamStore.Browser.DevServer\SqlStreamStore.Browser.DevServer.csproj", "{3B3A5799-8BE4-4E29-BECA-ECDC925C4E71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2.Tests", "src\SqlStreamStore.Browser2.Tests\SqlStreamStore.Browser2.Tests.csproj", "{7FE345A3-A4E3-4160-B364-14D590F3DB31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser.Tests", "src\SqlStreamStore.Browser.Tests\SqlStreamStore.Browser.Tests.csproj", "{7FE345A3-A4E3-4160-B364-14D590F3DB31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser2.Build", "src\SqlStreamStore.Browser2.Build\SqlStreamStore.Browser2.Build.csproj", "{D1B454F9-BF5B-4FE3-967D-D0B01527639A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlStreamStore.Browser.Build", "src\SqlStreamStore.Browser.Build\SqlStreamStore.Browser.Build.csproj", "{D1B454F9-BF5B-4FE3-967D-D0B01527639A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
