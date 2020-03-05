@@ -1,6 +1,6 @@
 using System;
 
-namespace SqlStreamStore.Browser2
+namespace SqlStreamStore.Browser
 {
     public class Stream
     {

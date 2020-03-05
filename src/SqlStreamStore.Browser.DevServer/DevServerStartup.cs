@@ -1,4 +1,4 @@
-namespace SqlStreamStore.Browser2.DevServer
+namespace SqlStreamStore.Browser.DevServer
 {
     using System;
     using Microsoft.AspNetCore.Builder;

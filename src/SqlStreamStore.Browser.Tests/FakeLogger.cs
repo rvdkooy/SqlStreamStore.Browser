@@ -1,4 +1,4 @@
-namespace SqlStreamStore.Browser2.Tests {
+namespace SqlStreamStore.Browser.Tests {
     using System;
     using Microsoft.Extensions.Logging;
     public class FakeLogger<T> : ILogger<T>

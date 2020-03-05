@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SqlStreamStore.Browser2\SqlStreamStore.Browser2.csproj" />
+    <ProjectReference Include="..\SqlStreamStore.Browser\SqlStreamStore.Browser.csproj" />
   </ItemGroup>
 
 </Project>

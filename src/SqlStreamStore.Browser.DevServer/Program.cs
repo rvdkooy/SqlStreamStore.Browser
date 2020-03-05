@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using SqlStreamStore.Streams;
 
-namespace SqlStreamStore.Browser2.DevServer
+namespace SqlStreamStore.Browser.DevServer
 {
     internal class Program : IDisposable
     {

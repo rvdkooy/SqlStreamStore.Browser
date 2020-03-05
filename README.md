@@ -1,1 +1,1 @@
-# SqlStreamStore.Browser2
+# SqlStreamStore.Browser
