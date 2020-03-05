@@ -8,4 +8,4 @@ docker run --rm -it --name sssb-build \
  --network host \
  -e TRAVIS_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER \
  sssb-build \
- dotnet run -p /repo/src/SqlStreamStore.Browser2.Build/SqlStreamStore.Browser2.Build.csproj -- "$@"
+ dotnet run -p /repo/src/SqlStreamStore.Browser.Build/SqlStreamStore.Browser.Build.csproj -- "$@"
