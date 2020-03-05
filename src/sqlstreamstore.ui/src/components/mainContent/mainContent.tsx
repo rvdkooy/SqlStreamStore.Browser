@@ -9,7 +9,6 @@ const useStyles = makeStyles({
     marginTop: '60px',
     flexGrow: 1,
     height: '100vh',
-    overflow: 'auto',
   },
 });
 
