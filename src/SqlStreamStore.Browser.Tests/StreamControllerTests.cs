@@ -44,5 +44,24 @@ namespace SqlStreamStore.Browser.Tests
             Assert.Equal("message 150", result.First().Type);
             Assert.Equal("message 51", result.Last().Type);
         }
+
+        [Fact]
+        public async void Should_return_a_stream_by_its_streamid()
+        {
+            var streamStore = new InMemoryStreamStore();
+            var controller = new StreamsController(new FakeLogger<StreamsController>(), streamStore);
+            var streamMessageOne = new NewStreamMessage(Guid.NewGuid(), "firstMessage", "json data 1");
+            var streamMessageTwo = new NewStreamMessage(Guid.NewGuid(), "secondMessage", "json data 2");
+            var streamId = Guid.NewGuid();
+
+            await streamStore.AppendToStream(streamId.ToString(), ExpectedVersion.Any, streamMessageOne);
+            await streamStore.AppendToStream(streamId.ToString(), ExpectedVersion.Any, streamMessageTwo);
+
+            var result = await controller.GetByStreamId(streamId.ToString());
+
+            Assert.Equal(2, result.Count());
+            Assert.Equal(streamMessageTwo.MessageId, result.First().MessageId);
+            Assert.Equal(streamMessageOne.MessageId, result.Last().MessageId);
+        }
     }
 }
