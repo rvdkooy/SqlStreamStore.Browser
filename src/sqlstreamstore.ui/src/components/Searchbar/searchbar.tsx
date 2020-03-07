@@ -32,7 +32,11 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CustomizedInputBase() {
+interface Props {
+  onSearchStreamId: (streamId: string) => void;
+}
+
+export default function CustomizedInputBase(props: Props) {
   const classes = useStyles();
   const [showSearchInputField, setShowSearchInputField] = useState(false);
   return (
@@ -50,6 +54,7 @@ export default function CustomizedInputBase() {
               className={classes.input}
               placeholder="Search for stream id"
               inputProps={{ 'aria-label': 'Search for stream id' }}
+              onChange={(e) => props.onSearchStreamId(e.target.value)}
             />
             <IconButton
               onClick={() => setShowSearchInputField(false)}

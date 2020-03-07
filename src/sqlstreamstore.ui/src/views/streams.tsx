@@ -9,7 +9,6 @@ import Paper from '@material-ui/core/Paper';
 import Searchbar from '../components/Searchbar/searchbar';
 import IconButton from '@material-ui/core/IconButton';
 import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core';
 
 interface Stream {
@@ -39,21 +38,33 @@ const useStyles = makeStyles({
 const Streams = () => {
   const classes = useStyles();
 
+  async function retrieveStreams() {
+    const resp = await fetch('/api/streams');
+    const streams = await resp.json();
+    updateStreams(streams);
+  }
+
   const [streams, updateStreams] = useState<Array<Stream>>([]);
   useEffect(() => {
-    async function retrieveStreams() {
-      const resp = await fetch('/api/streams');
-      const streams = await resp.json();
-      console.log(streams);
-      updateStreams(streams);
-    }
     retrieveStreams();
   }, []);
+
+  const onSearchStreamId = async (streamId: string) => {
+    if (streamId) {
+      const resp = await fetch('/api/streams/' + streamId);
+      const streams = await resp.json();
+      updateStreams(streams);
+    } else {
+      retrieveStreams();
+    }
+  }
 
   return (
     <div className={classes.root}>
       <div className={classes.searchContainer}>
-        <Searchbar />  
+        <Searchbar
+          onSearchStreamId={onSearchStreamId}
+        />  
       </div>
       <TableContainer component={Paper}>
         <Table stickyHeader aria-label="streams table" size="small">
