@@ -44,7 +44,7 @@ const Dashboard = () => {
       <Paper className={classes.paper}>
         <div className={classes.buttonContainer}>
           <Button variant="outlined" size="large" color="primary" component={Link} to="/streams">
-            Click here to find streams
+            Browse streams
           </Button>
         </div>
         <div className={classes.cardContainer}>

@@ -7,12 +7,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton';
-import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser';
+import FormatListBulletedOutlinedIcon from '@material-ui/icons/FormatListBulletedOutlined';
 import { makeStyles } from '@material-ui/core';
-import { Stream } from './models';
+import { StreamResponse } from '../../services/streamsApi';
 
 interface Props {
-  streams: Stream[];
+  streams: StreamResponse[];
 }
 
 const useStyles = makeStyles({
@@ -47,7 +47,7 @@ const StreamsTable = (props: Props) => {
                 <IconButton
                   aria-label="open stream"
                 >
-                  <OpenInBrowserIcon />
+                  <FormatListBulletedOutlinedIcon />
                 </IconButton>
               </TableCell>
               <TableCell component="th" scope="row">
