@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from "react-router-dom";
-import DashBoard from '../../views/dashboard';
+import DashBoard from '../../views/dashboard/dashboard';
 import StreamsView from '../../views/streams/main';
 import { makeStyles } from '@material-ui/core';
 
