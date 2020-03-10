@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -37,6 +38,18 @@ export default function CustomizedInputBase(props: Props) {
   const classes = useStyles();
   const [showSearchInputField, setShowSearchInputField] = useState(false);
   const [searchString, setSearchString] = useState('');
+  const params = useParams<{ streamId: string }>();
+
+  useEffect(() => {
+    if (params.streamId && !showSearchInputField) {
+      setSearchString(params.streamId);
+      setShowSearchInputField(true);
+    }
+    if (!params.streamId && showSearchInputField) {
+      setSearchString('');
+      setShowSearchInputField(false);
+    }
+  }, [params.streamId, showSearchInputField])
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
