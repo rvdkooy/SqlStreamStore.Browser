@@ -45,15 +45,20 @@ export default function CustomizedInputBase(props: Props) {
       setSearchString(params.streamId);
       setShowSearchInputField(true);
     }
-    if (!params.streamId && showSearchInputField) {
-      setSearchString('');
-      setShowSearchInputField(false);
-    }
+    // if (!params.streamId && showSearchInputField) {
+    //   setSearchString('');
+    //   setShowSearchInputField(false);
+    // }
   }, [params.streamId, showSearchInputField])
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
   };
+
+  const onShowSearchClicked = () => {
+    setShowSearchInputField(true);
+  };
+
   const onSearchSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault();
     props.onSearchStreamId(searchString);
@@ -69,7 +74,7 @@ export default function CustomizedInputBase(props: Props) {
     <div>
       {
         (showSearchInputField) ?
-          <Paper component="form" className={classes.root} onSubmit={onSearchSubmit}>
+          <Paper data-testid="search-container" component="form" className={classes.root} onSubmit={onSearchSubmit}>
             <IconButton
               aria-label="search"
             >
@@ -94,7 +99,8 @@ export default function CustomizedInputBase(props: Props) {
           <div className={classes.root}>
 
             <IconButton
-              onClick={() => setShowSearchInputField(true)}
+              data-testid="open-search-button"
+              onClick={onShowSearchClicked}
               aria-label="search"
             >
               <SearchIcon />
@@ -106,6 +112,7 @@ export default function CustomizedInputBase(props: Props) {
               onClick={() => { }}
               disabled={false}
               aria-label="first page"
+              data-testid="first-page-button"
             >
               <FirstPageIcon />
             </IconButton>
@@ -113,6 +120,7 @@ export default function CustomizedInputBase(props: Props) {
               onClick={() => { }}
               disabled={false}
               aria-label="previous page"
+              data-testid="previous-page-button"
             >
               <KeyboardArrowLeft />
             </IconButton>
@@ -121,6 +129,7 @@ export default function CustomizedInputBase(props: Props) {
               onClick={() => { }}
               disabled={false}
               aria-label="next page"
+              data-testid="next-page-button"
             >
               <KeyboardArrowRight />
             </IconButton>
@@ -128,6 +137,7 @@ export default function CustomizedInputBase(props: Props) {
               onClick={() => { }}
               disabled={false}
               aria-label="last page"
+              data-testid="last-page-button"
             >
               <LastPageIcon />
             </IconButton>
