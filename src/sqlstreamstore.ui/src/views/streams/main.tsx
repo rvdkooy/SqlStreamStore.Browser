@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import Searchbar from '../../components/Searchbar/searchbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core';
@@ -22,9 +23,10 @@ const useStyles = makeStyles({
 
 const StreamsView = () => {
   const classes = useStyles();
+  const history = useHistory();
+  const params = useParams<{ streamId: string }>();
   const [streams, updateStreams] = useState<Array<StreamResponse>>([]);
   const [status, updateStatus] = useState('error');
-  const [streamId, updateStreamId] = useState<string | undefined>();
 
   useEffect(() => {
     async function retrieveStreams(streamId?: string) {
@@ -39,14 +41,14 @@ const StreamsView = () => {
       }
     }
     
-    retrieveStreams(streamId);
-  }, [streamId]);
+    retrieveStreams(params.streamId);
+  }, [params.streamId]);
 
   return (
     <div className={classes.root}>
       <div className={classes.searchContainer}>
         <Searchbar
-          onSearchStreamId={(streamId) => updateStreamId(streamId)}
+          onSearchStreamId={(streamId) => history.push(`/streams/${streamId}`)}
         />
       </div>
       {

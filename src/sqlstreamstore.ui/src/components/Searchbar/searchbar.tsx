@@ -41,7 +41,7 @@ export default function CustomizedInputBase(props: Props) {
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
   };
-  const onSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSearchSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault();
     props.onSearchStreamId(searchString);
   };
@@ -56,29 +56,27 @@ export default function CustomizedInputBase(props: Props) {
     <div>
       {
         (showSearchInputField) ?
-          <form onSubmit={onSearchSubmit}>
-            <Paper component="form" className={classes.root}>
-              <IconButton
-                aria-label="search"
-              >
-                <SearchIcon />
-              </IconButton>
-              <InputBase
-                value={searchString}
-                className={classes.input}
-                placeholder="Search for stream id"
-                inputProps={{ 'aria-label': 'Search for stream id' }}
-                onChange={onSearchChange}
-              />
-              <IconButton
-                type="button"
-                onClick={onCloseSearchClicked}
-                aria-label="close search"
-              >
-                <ClearIcon />
-              </IconButton>
-            </Paper>
-          </form>
+          <Paper component="form" className={classes.root} onSubmit={onSearchSubmit}>
+            <IconButton
+              aria-label="search"
+            >
+              <SearchIcon />
+            </IconButton>
+            <InputBase
+              value={searchString}
+              className={classes.input}
+              placeholder="Search for stream id"
+              inputProps={{ 'aria-label': 'Search for stream id' }}
+              onChange={onSearchChange}
+            />
+            <IconButton
+              type="button"
+              onClick={onCloseSearchClicked}
+              aria-label="close search"
+            >
+              <ClearIcon />
+            </IconButton>
+          </Paper>
           :
           <div className={classes.root}>
 
