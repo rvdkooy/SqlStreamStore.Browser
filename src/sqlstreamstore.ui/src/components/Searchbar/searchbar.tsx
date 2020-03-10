@@ -23,9 +23,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     flex: 1,
   },
-  iconButton: {
-    padding: '0 10px',
-  },
   divider: {
     height: 28,
     margin: 4,
@@ -39,37 +36,54 @@ interface Props {
 export default function CustomizedInputBase(props: Props) {
   const classes = useStyles();
   const [showSearchInputField, setShowSearchInputField] = useState(false);
+  const [searchString, setSearchString] = useState('');
+
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchString(e.target.value);
+  };
+  const onSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    props.onSearchStreamId(searchString);
+  };
+
+  const onCloseSearchClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setSearchString('');
+    props.onSearchStreamId('');
+    setShowSearchInputField(false);
+  };
+
   return (
     <div>
       {
         (showSearchInputField) ?
-          <Paper component="form" className={classes.root}>
-            <IconButton
-              className={classes.iconButton}
-              aria-label="search"
-            >
-              <SearchIcon />
-            </IconButton>
-            <InputBase
-              className={classes.input}
-              placeholder="Search for stream id"
-              inputProps={{ 'aria-label': 'Search for stream id' }}
-              onChange={(e) => props.onSearchStreamId(e.target.value)}
-            />
-            <IconButton
-              onClick={() => setShowSearchInputField(false)}
-              className={classes.iconButton}
-              aria-label="close search"
-            >
-              <ClearIcon />
-            </IconButton>
-          </Paper>
+          <form onSubmit={onSearchSubmit}>
+            <Paper component="form" className={classes.root}>
+              <IconButton
+                aria-label="search"
+              >
+                <SearchIcon />
+              </IconButton>
+              <InputBase
+                value={searchString}
+                className={classes.input}
+                placeholder="Search for stream id"
+                inputProps={{ 'aria-label': 'Search for stream id' }}
+                onChange={onSearchChange}
+              />
+              <IconButton
+                type="button"
+                onClick={onCloseSearchClicked}
+                aria-label="close search"
+              >
+                <ClearIcon />
+              </IconButton>
+            </Paper>
+          </form>
           :
           <div className={classes.root}>
 
             <IconButton
               onClick={() => setShowSearchInputField(true)}
-              className={classes.iconButton}
               aria-label="search"
             >
               <SearchIcon />
@@ -78,14 +92,14 @@ export default function CustomizedInputBase(props: Props) {
             <Divider orientation="vertical" flexItem />
 
             <IconButton
-              onClick={() =>{}}
+              onClick={() => { }}
               disabled={false}
               aria-label="first page"
             >
               <FirstPageIcon />
             </IconButton>
             <IconButton
-              onClick={() =>{}}
+              onClick={() => { }}
               disabled={false}
               aria-label="previous page"
             >
@@ -93,14 +107,14 @@ export default function CustomizedInputBase(props: Props) {
             </IconButton>
             <Typography>page 1</Typography>
             <IconButton
-              onClick={() =>{}}
+              onClick={() => { }}
               disabled={false}
               aria-label="next page"
             >
               <KeyboardArrowRight />
             </IconButton>
             <IconButton
-              onClick={() =>{}}
+              onClick={() => { }}
               disabled={false}
               aria-label="last page"
             >
