@@ -22,10 +22,10 @@ namespace SqlStreamStore.Browser.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Stream>> Get()
+        public async Task<IEnumerable<StreamResponse>> Get()
         {
             return (await _streamStore.ReadAllBackwards(Position.End, 100))
-                .Messages.Select(message => new Stream()
+                .Messages.Select(message => new StreamResponse()
                 {
                     StreamId = message.StreamId,
                     CreatedUtc = message.CreatedUtc,
@@ -38,11 +38,10 @@ namespace SqlStreamStore.Browser.Controllers
 
         [HttpGet]
         [Route("{streamid}")]
-        public async Task<IEnumerable<Stream>> GetByStreamId(string streamId)
+        public async Task<IEnumerable<StreamResponse>> GetByStreamId(string streamId)
         {
-            Console.WriteLine(streamId);
             return (await _streamStore.ReadStreamBackwards(new StreamId(streamId), StreamVersion.End, 10000))
-                .Messages.Select(message => new Stream()
+                .Messages.Select(message => new StreamResponse()
                 {
                     StreamId = message.StreamId,
                     CreatedUtc = message.CreatedUtc,
@@ -51,6 +50,36 @@ namespace SqlStreamStore.Browser.Controllers
                     Type = message.Type,
                 })
                 .ToArray();
+        }
+
+        [HttpGet]
+        [Route("{streamid}/{messageId}")]
+        public async Task<ActionResult<StreamMessageResponse>> GetMessageByStreamAndMessageId(string streamId, Guid messageId)
+        {
+            try
+            {
+                var stream = await _streamStore.ReadStreamBackwards(new StreamId(streamId), StreamVersion.End, 10000);
+                var streamMessage = stream.Messages.FirstOrDefault(m => m.MessageId == messageId);
+                
+                if (streamMessage.Equals(default(StreamMessage))) {
+                  return this.StatusCode(404);
+                }
+                
+                return new StreamMessageResponse()
+                {
+                    StreamId = streamMessage.StreamId,
+                    CreatedUtc = streamMessage.CreatedUtc,
+                    MessageId = streamMessage.MessageId,
+                    StreamVersion = streamMessage.StreamVersion,
+                    Type = streamMessage.Type,
+                    JsonData = await streamMessage.GetJsonData(),
+                };
+            }
+            catch (Exception ex)
+            {
+              Console.WriteLine(ex.Message);
+              return this.StatusCode(400);
+            }
         }
     }
 }

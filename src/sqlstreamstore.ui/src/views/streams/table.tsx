@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -28,7 +28,6 @@ const useStyles = makeStyles({
 
 const StreamsTable = (props: Props) => {
   const classes = useStyles();
-  const history = useHistory();
 
   return (
     <TableContainer component={Paper}>

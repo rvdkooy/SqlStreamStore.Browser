@@ -20,6 +20,6 @@
     "jsx": "react"
   },
   "include": [
-    "src"
+    "src", "pretty-print-json.d.ts"
   ]
 }
