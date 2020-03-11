@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from "react-router-dom";
-import DashBoard from '../../views/dashboard';
-import Streams from '../../views/streams';
+import DashBoard from '../../views/dashboard/dashboard';
+import StreamsView from '../../views/streams/main';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles({
@@ -9,7 +9,6 @@ const useStyles = makeStyles({
     marginTop: '60px',
     flexGrow: 1,
     height: '100vh',
-    overflow: 'auto',
   },
 });
 
@@ -22,8 +21,8 @@ const MainContent = () => {
         <Route exact path="/">
           <DashBoard />
         </Route>
-        <Route path="/streams">
-          <Streams />
+        <Route path="/streams/:streamId?/:messageId?">
+          <StreamsView />
         </Route>
       </Switch>
     </main>

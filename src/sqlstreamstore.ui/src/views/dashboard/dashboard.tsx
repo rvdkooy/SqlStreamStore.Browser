@@ -1,5 +1,5 @@
 import React from 'react';
-import Hero from '../components/mainHero/hero';
+import Hero from '../../components/mainHero/hero';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -44,7 +44,7 @@ const Dashboard = () => {
       <Paper className={classes.paper}>
         <div className={classes.buttonContainer}>
           <Button variant="outlined" size="large" color="primary" component={Link} to="/streams">
-            Click here to find streams
+            Browse streams
           </Button>
         </div>
         <div className={classes.cardContainer}>

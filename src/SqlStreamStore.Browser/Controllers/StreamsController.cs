@@ -35,5 +35,22 @@ namespace SqlStreamStore.Browser.Controllers
                 })
                 .ToArray();
         }
+
+        [HttpGet]
+        [Route("{streamid}")]
+        public async Task<IEnumerable<Stream>> GetByStreamId(string streamId)
+        {
+            Console.WriteLine(streamId);
+            return (await _streamStore.ReadStreamBackwards(new StreamId(streamId), StreamVersion.End, 10000))
+                .Messages.Select(message => new Stream()
+                {
+                    StreamId = message.StreamId,
+                    CreatedUtc = message.CreatedUtc,
+                    MessageId = message.MessageId,
+                    StreamVersion = message.StreamVersion,
+                    Type = message.Type,
+                })
+                .ToArray();
+        }
     }
 }
