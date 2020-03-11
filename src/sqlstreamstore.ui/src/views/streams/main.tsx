@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import StreamsTable from './table';
+import MessageDrawer from './messageDrawer';
 import streamsApi, { StreamResponse } from '../../services/streamsApi';
 
 const useStyles = makeStyles({
@@ -67,6 +68,7 @@ const StreamsView = () => {
       {
         (status === 'done') ? <StreamsTable streams={streams} /> : null
       }
+      <MessageDrawer />
     </div>
   );
 };

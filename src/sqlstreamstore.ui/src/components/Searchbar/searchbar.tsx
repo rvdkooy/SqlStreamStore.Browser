@@ -52,7 +52,7 @@ export default function CustomizedInputBase(props: Props) {
       setSearchString('');
       setShowSearchInputField(false);
     }
-  }, [params.streamId, showSearchInputField])
+  }, [params.streamId, showSearchInputField, prevStreamId])
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchString(e.target.value);
@@ -114,7 +114,7 @@ export default function CustomizedInputBase(props: Props) {
 
             <IconButton
               onClick={() => { }}
-              disabled={false}
+              disabled={true}
               aria-label="first page"
               data-testid="first-page-button"
             >
@@ -122,7 +122,7 @@ export default function CustomizedInputBase(props: Props) {
             </IconButton>
             <IconButton
               onClick={() => { }}
-              disabled={false}
+              disabled={true}
               aria-label="previous page"
               data-testid="previous-page-button"
             >
@@ -131,7 +131,7 @@ export default function CustomizedInputBase(props: Props) {
             <Typography>page 1</Typography>
             <IconButton
               onClick={() => { }}
-              disabled={false}
+              disabled={true}
               aria-label="next page"
               data-testid="next-page-button"
             >
@@ -139,7 +139,7 @@ export default function CustomizedInputBase(props: Props) {
             </IconButton>
             <IconButton
               onClick={() => { }}
-              disabled={false}
+              disabled={true}
               aria-label="last page"
               data-testid="last-page-button"
             >
