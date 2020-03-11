@@ -12,6 +12,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import { Typography } from '@material-ui/core';
+import usePrevious from '../hooks/usePrevious';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,15 +41,17 @@ export default function CustomizedInputBase(props: Props) {
   const [searchString, setSearchString] = useState('');
   const params = useParams<{ streamId: string }>();
 
+  const prevStreamId = usePrevious(params.streamId);
+  
   useEffect(() => {
     if (params.streamId && !showSearchInputField) {
       setSearchString(params.streamId);
       setShowSearchInputField(true);
     }
-    // if (!params.streamId && showSearchInputField) {
-    //   setSearchString('');
-    //   setShowSearchInputField(false);
-    // }
+    if ((prevStreamId && !params.streamId) && showSearchInputField) {
+      setSearchString('');
+      setShowSearchInputField(false);
+    }
   }, [params.streamId, showSearchInputField])
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +91,7 @@ export default function CustomizedInputBase(props: Props) {
               onChange={onSearchChange}
             />
             <IconButton
+              data-testid="close-search-button"
               type="button"
               onClick={onCloseSearchClicked}
               aria-label="close search"
