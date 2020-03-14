@@ -1,5 +1,11 @@
+let _basePath = '';
+
+export const setBasePath = (basePath: string | null) => {
+  _basePath = basePath || '/';
+}
+
 export const getStreams = async (streamId?: string) => {
-  let url = '/api/streams';
+  let url = `${_basePath}api/streams`;
   if (streamId) {
     url += '/' + streamId;
   }
@@ -10,7 +16,7 @@ export const getStreams = async (streamId?: string) => {
 };
 
 export const getMessage = async (streamId: string, messageId: string) => {
-  const resp = await fetch(`/api/streams/${streamId}/${messageId}`);
+  const resp = await fetch(`${_basePath}api/streams/${streamId}/${messageId}`);
   const message = await resp.json();
   return StreamMessage.fromJson(message);
 }

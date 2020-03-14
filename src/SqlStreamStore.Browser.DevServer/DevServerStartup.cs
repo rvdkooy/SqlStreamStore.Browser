@@ -21,6 +21,6 @@ namespace SqlStreamStore.Browser.DevServer
             .BuildServiceProvider();
 
         public void Configure(IApplicationBuilder app) => app
-            .UseSqlStreamStoreBrowser();
+            .Map("/sssb", inner => inner.UseSqlStreamStoreBrowser());
     }
 }
