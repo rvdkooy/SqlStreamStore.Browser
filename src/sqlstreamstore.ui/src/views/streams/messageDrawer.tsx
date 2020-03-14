@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   jsonData: {
     padding: 10,
+    fontSize: theme.typography.fontSize,
   },
   propertyBlock: {
     marginBottom: '8px',
