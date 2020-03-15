@@ -74,15 +74,16 @@ describe('Main specs', () => {
   it('should render an error message when fetching failed', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => { });
     jest.spyOn(streamsApi, 'getStreams').mockRejectedValue('');
-    await act(async () => {
+    const container = render(
+      <MemoryRouter>
+        <Main />
+      </MemoryRouter>
+    );
+    await flushPromises();
+    expect(container.getByText(/An error occured while retrieving streams/)).toBeTruthy();
 
-      const container = render(
-        <MemoryRouter>
-          <Main />
-        </MemoryRouter>
-      );
-      await flushPromises();
-      expect(container.getByText(/An error occured while retrieving streams/)).toBeTruthy();
+    await act(async () => {
+      await streamsApi.getStreams;
     });
   });
 });
