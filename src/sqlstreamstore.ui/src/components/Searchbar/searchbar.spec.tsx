@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter, Router, Route } from 'react-router-dom';
 import { render, fireEvent, wait } from '@testing-library/react';
-import { createMemoryHistory } from 'history'
+import { createMemoryHistory } from 'history';
 import SearchBar from './searchbar';
 
 describe('seachbar specs', () => {
