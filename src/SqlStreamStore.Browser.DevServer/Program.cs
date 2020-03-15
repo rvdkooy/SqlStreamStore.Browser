@@ -49,7 +49,7 @@ namespace SqlStreamStore.Browser.DevServer
                     .UseSerilog()
                     .Build())
                 {
-                    Write(streamStore, 20, 10);
+                    Write(streamStore, 5, 20);
                     
                     var serverTask = host.RunAsync(_cts.Token);
 

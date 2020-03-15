@@ -8351,6 +8351,11 @@ pretty-format@^25.1.0:
     ansi-styles "^4.0.0"
     react-is "^16.12.0"
 
+pretty-print-json@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/pretty-print-json/-/pretty-print-json-0.2.0.tgz#67c7dbd2626f3a3f893f8f2a40c83767143d9942"
+  integrity sha512-zsexhf7s+lLlfdXnmHqZwC0bKuNjwRJF/uuEHK+BWg7z//hKOjCHsodLwsbqX4OKraK/r+9kfKoNMOyRs83beQ==
+
 private@^0.1.6:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/private/-/private-0.1.8.tgz#2381edb3689f7a53d653190060fcf822d2f368ff"

@@ -10,7 +10,8 @@ namespace build
     class Program
     {
         private const string ArtifactsDir = "artifacts";
-        private const string Build = "build";
+        private const string DotnetBuild = "dotnetbuild";
+        private const string YarnBuild = "yarnbuild";
         private const string DotnetTest = "dotnettest";
         private const string YarnTest = "yarntest";
         private const string Pack = "pack";
@@ -19,11 +20,13 @@ namespace build
 
         private static void Main(string[] args)
         {
-            Target(Build, () => Run("dotnet", "build --configuration=Release"));
+            Target(DotnetBuild, () => Run("dotnet", "build --configuration=Release"));
+
+            Target(YarnBuild, () => Run("yarn", "--cwd ./src/sqlstreamstore.ui build"));
 
             Target(
                 DotnetTest,
-                DependsOn(Build),
+                DependsOn(DotnetBuild),
                 ForEach(    
                     "SqlStreamStore.Browser.Tests"
                 ), 
@@ -42,7 +45,7 @@ namespace build
             
             Target(
                 YarnTest,
-                DependsOn(DotnetTest),
+                DependsOn(YarnBuild),
                 () => {
                     try {
                         Run("yarn", "--cwd ./src/sqlstreamstore.ui test --watchAll=false");
@@ -56,7 +59,7 @@ namespace build
 
             Target(
                 Pack,
-                DependsOn(YarnTest),
+                DependsOn(YarnTest, DotnetTest),
                 ForEach(
                     "SqlStreamStore.Browser"
                 ),
