@@ -7,24 +7,33 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied';
 import FilterList from '@material-ui/icons/FilterList';
 import FormatListBulletedOutlinedIcon from '@material-ui/icons/FormatListBulletedOutlined';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { StreamResponse } from '../../services/streamsApi';
 
 interface Props {
   streams: StreamResponse[];
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   linkIcon: {
     verticalAlign: 'middle',
-    marginRight: 4,
+    marginRight: theme.spacing(1),
   },
   link: {
     marginRight: 20,
   },
-});
+  noResults: {
+    padding: '40px 0',
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  noResultsIcon: {
+    marginRight: theme.spacing(1),
+  }
+}));
 
 const StreamsTable = (props: Props) => {
   const classes = useStyles();
@@ -64,6 +73,14 @@ const StreamsTable = (props: Props) => {
           ))}
         </TableBody>
       </Table>
+      {
+        (!props.streams.length) ? 
+          <div className={classes.noResults}>
+            <SentimentDissatisfiedIcon className={classes.noResultsIcon} />
+            <Typography>No results...</Typography>
+          </div> : null
+      }
+      
     </TableContainer>
   )
 };
