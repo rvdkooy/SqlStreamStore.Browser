@@ -15,13 +15,21 @@ describe('Main specs', () => {
     jest.clearAllMocks();
   });
 
-  it('should render a progress indicator when fetching the streams', () => {
+  it('should render a progress indicator when fetching the streams', async () => {
+    jest.spyOn(streamsApi, 'getStreams').mockResolvedValue([]);
+    const history = createMemoryHistory()
+    history.push('/streams');
+
     const container = render(
-      <MemoryRouter>
-        <Main />
-      </MemoryRouter>
+      <Router history={history}>
+        <Route path="/streams">
+          <Main />
+        </Route>
+      </Router>
     );
     expect(container.getByRole('progressbar')).toBeTruthy();
+
+    await act(streamsApi.getStreams);
   });
 
   it('should render the streams table when streams are fetched', async () => {
@@ -43,7 +51,7 @@ describe('Main specs', () => {
       jest.spyOn(streamsApi, 'getStreams').mockResolvedValue([]);
       const history = createMemoryHistory()
       history.push('/streams/1');
-      
+
       render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
@@ -62,7 +70,7 @@ describe('Main specs', () => {
   });
 
   it('should render an error message when fetching failed', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => { });
     jest.spyOn(streamsApi, 'getStreams').mockRejectedValue('');
     await act(async () => {
 
