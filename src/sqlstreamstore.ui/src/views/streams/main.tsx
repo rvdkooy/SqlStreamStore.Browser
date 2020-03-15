@@ -5,7 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import StreamsTable from './table';
-import MessageDrawer from './messageDrawer';
+import MessageDrawer from './drawer';
 import streamsApi, { StreamResponse } from '../../services/streamsApi';
 
 const useStyles = makeStyles({
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 const StreamsView = () => {
   const classes = useStyles();
   const history = useHistory();
-  const params = useParams<{ streamId: string }>();
+  const params = useParams<{ streamId: string, messageId: string }>();
   const [streams, updateStreams] = useState<Array<StreamResponse>>([]);
   const [status, updateStatus] = useState('error');
 
@@ -44,6 +44,10 @@ const StreamsView = () => {
     
     retrieveStreams(params.streamId);
   }, [params.streamId]);
+
+  const onDrawerCloseButtonClicked = () => {
+    history.push(`/streams/${params.streamId}`);
+  };
 
   return (
     <div className={classes.root}>
@@ -68,7 +72,11 @@ const StreamsView = () => {
       {
         (status === 'done') ? <StreamsTable streams={streams} /> : null
       }
-      <MessageDrawer />
+      <MessageDrawer
+        onCloseButtonClicked={onDrawerCloseButtonClicked}
+        messageId={params.messageId}
+        streamId={params.streamId}
+      />
     </div>
   );
 };
