@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import Searchbar from '../../components/Searchbar/searchbar';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import ProgressIndicator from '../../components/progressIndicator';
 import { makeStyles } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
+import ErrorMessage from '../../components/errorMessage';
 import StreamsTable from './table';
 import MessageDrawer from './drawer';
 import streamsApi, { StreamResponse } from '../../services/streamsApi';
@@ -15,11 +15,6 @@ const useStyles = makeStyles({
   searchContainer: {
     padding: '10px 0',
   },
-  progressContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: 40,
-  }
 });
 
 const StreamsView = () => {
@@ -57,17 +52,10 @@ const StreamsView = () => {
         />
       </div>
       {
-        (status === 'loading') ?
-          <div className={classes.progressContainer}>
-            <CircularProgress></CircularProgress>
-          </div> : null
+        (status === 'loading') ? <ProgressIndicator />: null
       }
       {
-        (status === 'error') ?
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            An error occured while retrieving streams
-          </Alert> : null
+        (status === 'error') ? <ErrorMessage message="An error occured while retrieving streams" /> : null
       }
       {
         (status === 'done') ? <StreamsTable streams={streams} /> : null

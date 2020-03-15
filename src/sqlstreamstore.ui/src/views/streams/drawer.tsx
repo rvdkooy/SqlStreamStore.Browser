@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import usePrevious from '../../components/hooks/usePrevious'
 import { makeStyles } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
-import { Alert, AlertTitle } from '@material-ui/lab';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import ErrorMessage from '../../components/errorMessage';
+import ProgressIndicator from '../../components/progressIndicator';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import streamsApi, { StreamMessage } from '../../services/streamsApi';
@@ -21,11 +21,6 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: 'flex-start',
   },
-  progressContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: 40,
-  },
 }));
 
 interface Props {
@@ -39,7 +34,6 @@ const MessageDrawer = (props: Props) => {
   const [status, updateStatus] = useState('loading');
   const [streamMessage, setStreamMessage] = useState<StreamMessage | null>(null);
   const previousMessageId = usePrevious(props.messageId);
-
 
   useEffect(() => {
     if (!props.messageId && previousMessageId) {
@@ -76,16 +70,10 @@ const MessageDrawer = (props: Props) => {
           (status === 'done' && streamMessage) ? <MessageContent streamMessage={streamMessage} /> : null
         }
         {
-          (status === 'loading') ?
-            <div className={classes.progressContainer}>
-              <CircularProgress></CircularProgress>
-            </div> : null}
+          (status === 'loading') ? <ProgressIndicator /> : null
+        }
         {
-          (status === 'error') ?
-            <Alert severity="error">
-              <AlertTitle>Error</AlertTitle>
-              <p>An error occured while retrieving the message</p>
-            </Alert> : null
+          (status === 'error') ? <ErrorMessage message="An error occured while retrieving the message" /> : null
         }
       </div>
     </Drawer>
