@@ -29,7 +29,9 @@ describe('Main specs', () => {
     );
     expect(container.getByRole('progressbar')).toBeTruthy();
 
-    await act(streamsApi.getStreams);
+    await act(async () => {
+      await streamsApi.getStreams;
+    });
   });
 
   it('should render the streams table when streams are fetched', async () => {

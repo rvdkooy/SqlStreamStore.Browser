@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import usePrevious from '../../components/hooks/usePrevious'
 import { makeStyles } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
+import { Alert, AlertTitle } from '@material-ui/lab';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import streamsApi, { StreamMessage } from '../../services/streamsApi';
@@ -19,6 +21,11 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: 'flex-start',
   },
+  progressContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: 40,
+  },
 }));
 
 interface Props {
@@ -29,16 +36,25 @@ interface Props {
 
 const MessageDrawer = (props: Props) => {
   const classes = useStyles();
-  const previousMessageId = usePrevious(props.messageId);
+  const [status, updateStatus] = useState('loading');
   const [streamMessage, setStreamMessage] = useState<StreamMessage | null>(null);
+  const previousMessageId = usePrevious(props.messageId);
+
 
   useEffect(() => {
     if (!props.messageId && previousMessageId) {
       setStreamMessage(null);
     } else if (previousMessageId !== props.messageId) {
       const retrieveMessage = async (streamId: string, messageId: string) => {
-        const message = await streamsApi.getMessage(streamId, messageId);
-        setStreamMessage(message);
+        try {
+          updateStatus('loading');
+          const message = await streamsApi.getMessage(streamId, messageId);
+          setStreamMessage(message);
+          updateStatus('done');
+        } catch (err) {
+          console.error(err);
+          updateStatus('error');
+        }
       }
       retrieveMessage(props.streamId, props.messageId);
     }
@@ -56,7 +72,21 @@ const MessageDrawer = (props: Props) => {
         className={classes.content}
         role="presentation"
       >
-        { (streamMessage) ? <MessageContent streamMessage={streamMessage} /> : null }
+        {
+          (status === 'done' && streamMessage) ? <MessageContent streamMessage={streamMessage} /> : null
+        }
+        {
+          (status === 'loading') ?
+            <div className={classes.progressContainer}>
+              <CircularProgress></CircularProgress>
+            </div> : null}
+        {
+          (status === 'error') ?
+            <Alert severity="error">
+              <AlertTitle>Error</AlertTitle>
+              <p>An error occured while retrieving the message</p>
+            </Alert> : null
+        }
       </div>
     </Drawer>
   );

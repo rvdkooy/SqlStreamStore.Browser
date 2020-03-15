@@ -27,7 +27,7 @@ const StreamsView = () => {
   const history = useHistory();
   const params = useParams<{ streamId: string, messageId: string }>();
   const [streams, updateStreams] = useState<Array<StreamResponse>>([]);
-  const [status, updateStatus] = useState('error');
+  const [status, updateStatus] = useState('loading');
 
   useEffect(() => {
     async function retrieveStreams(streamId?: string) {

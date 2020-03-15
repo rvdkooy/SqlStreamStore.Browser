@@ -4,7 +4,7 @@ export const setBasePath = (basePath: string | null) => {
   _basePath = basePath || '/';
 }
 
-export const getStreams = async (streamId?: string) => {
+export const getStreams = async (streamId?: string): Promise<StreamResponse[]> => {
   let url = `${_basePath}api/streams`;
   if (streamId) {
     url += '/' + streamId;
@@ -15,7 +15,7 @@ export const getStreams = async (streamId?: string) => {
   return streams.map((s: any) => StreamResponse.fromJson(s))
 };
 
-export const getMessage = async (streamId: string, messageId: string) => {
+export const getMessage = async (streamId: string, messageId: string): Promise<StreamMessage> => {
   const resp = await fetch(`${_basePath}api/streams/${streamId}/${messageId}`);
   const message = await resp.json();
   return StreamMessage.fromJson(message);
