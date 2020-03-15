@@ -36,31 +36,33 @@ describe('Main specs', () => {
 
   it('should render the streams table when streams are fetched', async () => {
     jest.spyOn(streamsApi, 'getStreams').mockResolvedValue([]);
-    await act(async () => {
 
-      const container = render(
-        <MemoryRouter>
-          <Main />
-        </MemoryRouter>
-      );
+    const container = render(
+      <MemoryRouter>
+        <Main />
+      </MemoryRouter>
+    );
+
+    await act(async () => {
       await flushPromises();
       expect(container.getByTestId('mocked-table')).toBeTruthy();
     });
   });
 
   it('should fetch the streams again when streamid changes', async () => {
-    await act(async () => {
-      jest.spyOn(streamsApi, 'getStreams').mockResolvedValue([]);
-      const history = createMemoryHistory()
-      history.push('/streams/1');
+    jest.spyOn(streamsApi, 'getStreams').mockResolvedValue([]);
+    const history = createMemoryHistory()
+    history.push('/streams/1');
 
-      render(
-        <Router history={history}>
-          <Route path="/streams/:streamId?">
-            <Main />
-          </Route>
-        </Router>
-      );
+    render(
+      <Router history={history}>
+        <Route path="/streams/:streamId?">
+          <Main />
+        </Route>
+      </Router>
+    );
+
+    await act(async () => {
       await flushPromises();
       history.push('/streams/2');
       await flushPromises();
