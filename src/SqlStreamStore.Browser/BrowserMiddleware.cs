@@ -4,13 +4,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using SqlStreamStore.HAL;
 
 namespace SqlStreamStore.Browser
 {
     public static class BrowserStartup
     {
         public static IApplicationBuilder UseSqlStreamStoreBrowser(
-            this IApplicationBuilder builder
+            this IApplicationBuilder builder,
+            IStreamStore streamStore
         )
         {
             if(builder == null)
@@ -29,7 +31,10 @@ namespace SqlStreamStore.Browser
                     FileProvider = new EmbeddedFileProvider(currentAssembly, currentNamespace),
                     
                 })
-                .UseMvc()
+                .Map("/hal", innerBuilder =>
+                {
+                    innerBuilder.UseSqlStreamStoreHal(streamStore);
+                })
                 .Map("", innerBuilder =>
                 {
                     innerBuilder.Run(async (context) =>
@@ -48,16 +53,14 @@ namespace SqlStreamStore.Browser
                 });
         }
         public static IServiceCollection AddSqlStreamStoreBrowser(
-            this IServiceCollection serviceCollection,
-            IStreamStore streamStore
+            this IServiceCollection serviceCollection
         )
         {
             if(serviceCollection == null)
             {
                 throw new ArgumentNullException(nameof(serviceCollection));
             }
-            serviceCollection.AddSingleton(streamStore);
-            serviceCollection.AddMvc();
+            serviceCollection.AddSqlStreamStoreHal();
             return serviceCollection;
         }
     }

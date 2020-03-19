@@ -17,10 +17,10 @@ namespace SqlStreamStore.Browser.DevServer
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services) => services
-            .AddSqlStreamStoreBrowser(this._streamStore)
+            .AddSqlStreamStoreBrowser()
             .BuildServiceProvider();
 
         public void Configure(IApplicationBuilder app) => app
-            .Map("/sssb", inner => inner.UseSqlStreamStoreBrowser());
+            .Map("/sssb", inner => inner.UseSqlStreamStoreBrowser(this._streamStore));
     }
 }
