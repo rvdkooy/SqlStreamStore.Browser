@@ -6,7 +6,9 @@ import { makeStyles } from '@material-ui/core';
 import ErrorMessage from '../../components/errorMessage';
 import StreamsTable from './table';
 import MessageDrawer from './drawer';
-import streamsApi, { StreamResponse } from '../../services/streamsApi';
+import { getHalClient } from '../../services/hal';
+import { StreamResponse } from '../../services/streamsApi';
+import { HalResource } from 'hal-rest-client';
 
 const useStyles = makeStyles({
   root: {
@@ -24,12 +26,19 @@ const StreamsView = () => {
   const [streams, updateStreams] = useState<Array<StreamResponse>>([]);
   const [status, updateStatus] = useState('loading');
 
+  const halClient = getHalClient();
+
   useEffect(() => {
     async function retrieveStreams(streamId?: string) {
       try {
-        updateStatus('loading');
-        const streamResponse = await streamsApi.getStreams(streamId);
-        updateStreams(streamResponse);
+        updateStatus('loading');  
+        const streamResponse = await halClient.fetchResource(streamId ? `streams/${streamId}` : 'stream');
+        console.log(streamResponse.prop('streamStore:message'));
+        const streams = streamResponse.prop('streamStore:message').map((res: HalResource) => {
+          return new StreamResponse(res.prop('streamId'), res.prop('messageId'), res.prop('createdUtc'),
+          res.prop('streamVersion'), res.prop('type'), res.prop('position'));
+        });
+        updateStreams(streams);
         updateStatus('done');
       } catch (err) {
         console.error(err);
@@ -38,7 +47,7 @@ const StreamsView = () => {
     }
     
     retrieveStreams(params.streamId);
-  }, [params.streamId]);
+  }, [params.streamId, halClient]);
 
   const onDrawerCloseButtonClicked = () => {
     history.push(`/streams/${params.streamId}`);
