@@ -49,24 +49,26 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-interface ServerInfo {
+interface HalIndex {
   provider: string;
+  streamsLink: string;
   versions: { streamStore: string };
 }
 
 const Dashboard = () => {
   const classes = useStyles();
-  const [serverInfo, setServerInfo] = useState<ServerInfo>();
+  const [halIndex, setHalIndex] = useState<HalIndex>();
   const [status, setStatus] = useState('loading');
   const halClient = getHalClient();
   
   useEffect(() => {
     const fetch = async () => {
       try {
-        const resource = await halClient.fetchResource('/');
+        const resource = await halClient.fetchResource('./');
         const versions = resource.prop('versions') as { streamStore: string };
-        setServerInfo({
+        setHalIndex({
           provider: resource.prop('provider'),
+          streamsLink: resource.prop('streamStore:feed').uri.uri,
           versions: { streamStore: versions.streamStore.indexOf('+') !== -1 ? 
             versions.streamStore.split('+')[0]: 
             versions.streamStore,
@@ -91,10 +93,10 @@ const Dashboard = () => {
         (status === 'error') ? <ErrorMessage message="An error occured while retrieving the dashboard information!" /> : null
       }
       {
-        status === 'done' && serverInfo ?
+        status === 'done' && halIndex ?
           <Paper className={classes.paper}>
             <div className={classes.buttonContainer}>
-              <Button variant="outlined" size="large" color="primary" component={Link} to="/streams">
+              <Button variant="outlined" size="large" color="primary" component={Link} to={halIndex.streamsLink}>
                 Browse streams
           </Button>
             </div>
@@ -102,11 +104,11 @@ const Dashboard = () => {
               <Card>
                 <div>
                   <Typography className={classes.fatCaption} variant="caption">Provider:</Typography>
-                  <Typography variant="caption" color="textSecondary" className={classes.normalCaption}>{ serverInfo.provider }</Typography>
+                  <Typography variant="caption" color="textSecondary" className={classes.normalCaption}>{ halIndex.provider }</Typography>
                 </div>
                 <div>
                   <Typography className={classes.fatCaption} variant="caption">Version:</Typography>
-                  <Typography variant="caption" color="textSecondary" className={classes.normalCaption}>{ serverInfo.versions.streamStore }</Typography>
+                  <Typography variant="caption" color="textSecondary" className={classes.normalCaption}>{ halIndex.versions.streamStore }</Typography>
                 </div>
               </Card>
               <Card>
