@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
   halLinks: { [key: string]: HalResource };
+  fromPosition: string;
 }
 
 export default function CustomizedInputBase(props: Props) {
@@ -138,7 +139,7 @@ export default function CustomizedInputBase(props: Props) {
             >
               <KeyboardArrowLeft />
             </IconButton>
-            <Typography>page 1</Typography>
+            <Typography>{ `from position ${props.fromPosition}` }</Typography>
             <IconButton
               onClick={() => { }}
               disabled={!props.halLinks.next}

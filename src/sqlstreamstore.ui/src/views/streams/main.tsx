@@ -19,11 +19,10 @@ const useStyles = makeStyles({
 });
 
 const StreamsView = () => {
-  const classes = useStyles();  
+  const classes = useStyles();
   const history = useHistory();
   const params = useParams<{ streamId: string, messageId: string }>();
-  const [streams, updateStreams] = useState<HalResource[]>([]);
-  const [halLinks, updateHalLinks] = useState<{ [key: string]: HalResource }>({ });
+  const [halResponse, updateHalResponse] = useState<HalResource>();
   const [status, updateStatus] = useState('loading');
 
   const halClient = getHalClient();
@@ -33,17 +32,15 @@ const StreamsView = () => {
     async function retrieveStreams() {
       try {
         updateStatus('loading');
-        const halResponse = await halClient.fetchResource(`.${routeMatch.url}${q}`);
-        const halResourcesForTable = halResponse.prop('streamStore:message') as HalResource[];
-        updateHalLinks(halResponse.links);
-        updateStreams(halResourcesForTable);
+        const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}${q}`);
+        updateHalResponse(fetchHalResponse);
         updateStatus('done');
       } catch (err) {
         console.error(err);
         updateStatus('error');
       }
     }
-    
+
     retrieveStreams();
   }, [params, routeMatch, halClient, q]);
 
@@ -53,21 +50,24 @@ const StreamsView = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.searchContainer}>
-        <Searchbar
-          halLinks={halLinks}
-          fromPosition={}
-          nextPosition={}
-        />
-      </div>
+
       {
-        (status === 'loading') ? <ProgressIndicator />: null
+        (status === 'loading') ? <ProgressIndicator /> : null
       }
       {
         (status === 'error') ? <ErrorMessage message="An error occured while retrieving streams" /> : null
       }
       {
-        (status === 'done') ? <StreamsTable streams={streams} /> : null
+        (status === 'done' && halResponse) ?
+          <div>
+            <div className={classes.searchContainer}>
+              <Searchbar
+                halLinks={halResponse.links}
+                fromPosition={halResponse.prop('fromPosition')}
+              />
+            </div>
+            <StreamsTable streams={halResponse.prop('streamStore:message') as HalResource[]} />
+          </div> : null
       }
       <MessageDrawer
         onCloseButtonClicked={onDrawerCloseButtonClicked}
