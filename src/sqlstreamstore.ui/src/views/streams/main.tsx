@@ -10,8 +10,6 @@ import { getHalClient } from '../../services/hal';
 import { HalResource } from 'hal-rest-client';
 import usePrevious from '../../components/hooks/usePrevious'
 
-const fixUrl = (val: string): string => val.replace(/\.\.\//g, '');
-
 const useStyles = makeStyles({
   root: {
     padding: 10,
@@ -41,7 +39,7 @@ const StreamsView = () => {
           const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}${queryStrings}`);
           const streamStoreMessage = fetchHalResponse.prop('streamStore:message');
           if (streamStoreMessage instanceof HalResource) {
-            const streamsHalResource = await halClient.fetchResource('./' + fixUrl(streamStoreMessage.link('streamStore:feed').uri.uri));
+            const streamsHalResource = await halClient.fetchResource(streamStoreMessage.link('streamStore:feed').uri.uri);
             updateMessages(streamsHalResource.prop('streamStore:message'));
           } else {
             updateMessages(streamStoreMessage);
@@ -60,7 +58,8 @@ const StreamsView = () => {
 
   const onDrawerCloseButtonClicked = () => {
     if (halResponse) {
-      history.push('../../' + fixUrl(halResponse.link('streamStore:feed').uri.uri));
+      console.log(halResponse.link('streamStore:feed').uri.uri)
+      history.push('../../' + halResponse.link('streamStore:feed').uri.uri);
     }
   };
 
