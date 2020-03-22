@@ -8,6 +8,9 @@ import StreamsTable from './table';
 import MessageDrawer from './drawer';
 import { getHalClient } from '../../services/hal';
 import { HalResource } from 'hal-rest-client';
+import usePrevious from '../../components/hooks/usePrevious'
+
+const fixUrl = (val: string): string => val.replace(/\.\.\//g, '');
 
 const useStyles = makeStyles({
   root: {
@@ -21,20 +24,31 @@ const useStyles = makeStyles({
 const StreamsView = () => {
   const classes = useStyles();
   const history = useHistory();
-  const params = useParams<{ streamId: string, messageId: string }>();
+  const params = useParams<{ streamId: string, version: string }>();
   const [halResponse, updateHalResponse] = useState<HalResource>();
+  const [messages, updateMessages] = useState<HalResource[]>([]);
   const [status, updateStatus] = useState('loading');
-
+  const previousStreamId = usePrevious(params.streamId);
   const halClient = getHalClient();
   const routeMatch = useRouteMatch();
-  const q = useLocation().search;
+  const queryStrings = useLocation().search;
+  
   useEffect(() => {
     async function retrieveStreams() {
       try {
-        updateStatus('loading');
-        const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}${q}`);
-        updateHalResponse(fetchHalResponse);
-        updateStatus('done');
+        if (!params.streamId || params.streamId !== previousStreamId) {
+          updateStatus('loading');
+          const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}${queryStrings}`);
+          const streamStoreMessage = fetchHalResponse.prop('streamStore:message');
+          if (streamStoreMessage instanceof HalResource) {
+            const streamsHalResource = await halClient.fetchResource('./' + fixUrl(streamStoreMessage.link('streamStore:feed').uri.uri));
+            updateMessages(streamsHalResource.prop('streamStore:message'));
+          } else {
+            updateMessages(streamStoreMessage);
+          }
+          updateHalResponse(fetchHalResponse);
+          updateStatus('done');
+        }
       } catch (err) {
         console.error(err);
         updateStatus('error');
@@ -42,10 +56,12 @@ const StreamsView = () => {
     }
 
     retrieveStreams();
-  }, [params, routeMatch, halClient, q]);
+  }, [params, routeMatch, halClient, queryStrings, previousStreamId]);
 
   const onDrawerCloseButtonClicked = () => {
-    history.push(`/streams/${params.streamId}`);
+    if (halResponse) {
+      history.push('../../' + fixUrl(halResponse.link('streamStore:feed').uri.uri));
+    }
   };
 
   return (
@@ -66,13 +82,12 @@ const StreamsView = () => {
                 fromPosition={halResponse.prop('fromPosition')}
               />
             </div>
-            <StreamsTable streams={halResponse.prop('streamStore:message') as HalResource[]} />
+            <StreamsTable streams={messages} />
           </div> : null
       }
       <MessageDrawer
         onCloseButtonClicked={onDrawerCloseButtonClicked}
-        messageId={params.messageId}
-        streamId={params.streamId}
+        version={params.version}
       />
     </div>
   );

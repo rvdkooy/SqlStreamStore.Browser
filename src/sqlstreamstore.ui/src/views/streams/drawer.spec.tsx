@@ -18,7 +18,7 @@ const mockedStreamMessage = StreamMessage.fromJson({
 describe('message drawer specs', () => {
   it('should close the drawer when no messageId is provided', () => {
     const container = render(
-      <Drawer onCloseButtonClicked={jest.fn()} streamId={'1234'} messageId={undefined} />
+      <Drawer onCloseButtonClicked={jest.fn()} streamId={'1234'} version={undefined} />
     );
 
     expect(container.queryByTestId('drawer-content')).toBeFalsy()
@@ -29,7 +29,7 @@ describe('message drawer specs', () => {
 
     await act(async () => {
       const container = render(
-        <Drawer onCloseButtonClicked={jest.fn()} streamId={'1234'} messageId={'5678'} />
+        <Drawer onCloseButtonClicked={jest.fn()} streamId={'1234'} version={'5678'} />
       );
       await flushPromises();
       
@@ -48,7 +48,7 @@ describe('message drawer specs', () => {
     jest.spyOn(streamsApi, 'getMessage').mockResolvedValue(mockedStreamMessage);
     
     const container = render(
-      <Drawer onCloseButtonClicked={jest.fn()} streamId={'1234'} messageId={'5678'} />
+      <Drawer onCloseButtonClicked={jest.fn()} streamId={'1234'} version={'5678'} />
     );
     expect(container.getByRole('progressbar')).toBeTruthy();
 
@@ -63,7 +63,7 @@ describe('message drawer specs', () => {
 
     await act(async () => {
       const container = render(
-        <Drawer onCloseButtonClicked={jest.fn()} streamId={'1234'} messageId={'5678'} />
+        <Drawer onCloseButtonClicked={jest.fn()} streamId={'1234'} version={'5678'} />
       );
       await flushPromises();
       
@@ -76,7 +76,7 @@ describe('message drawer specs', () => {
     
     await act(async () => {
       render(
-        <Drawer onCloseButtonClicked={buttonClickSpy} streamId={'1234'} messageId={'5678'} />
+        <Drawer onCloseButtonClicked={buttonClickSpy} streamId={'1234'} version={'5678'} />
       );
       await flushPromises();
       fireEvent.click(document.querySelector('button') as HTMLButtonElement);

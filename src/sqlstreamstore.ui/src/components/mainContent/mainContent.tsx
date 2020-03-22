@@ -21,7 +21,7 @@ const MainContent = () => {
         <Route exact path="/">
           <DashBoard />
         </Route>
-        <Route path="/(stream|streams)/:streamId?/:messageId?">
+        <Route path="/(stream|streams)/:streamId?/:version?">
           <StreamsView />
         </Route>
       </Switch>

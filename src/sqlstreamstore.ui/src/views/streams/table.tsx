@@ -63,7 +63,7 @@ const StreamsTable = (props: Props) => {
                   {halRes.prop('streamId')}
               </TableCell>
               <TableCell>
-                <Link className={classes.link} to={`/`}>
+                <Link className={classes.link} to={halRes.link('streamStore:message').uri.uri}>
                   <FormatListBulletedOutlinedIcon className={classes.linkIcon} />Open
                 </Link>
                 {halRes.prop('messageId')}
