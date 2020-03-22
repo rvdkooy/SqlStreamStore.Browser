@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
 
 const StreamsTable = (props: Props) => {
   const classes = useStyles();
-
   return (
     <TableContainer component={Paper}>
       <Table stickyHeader aria-label="streams table">

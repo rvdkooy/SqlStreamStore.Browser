@@ -3,26 +3,33 @@ import { MemoryRouter, Router, Route } from 'react-router-dom';
 import { createMemoryHistory } from 'history'
 import { render, act } from '@testing-library/react';
 import Main from './main';
-import streamsApi from '../../services/streamsApi';
+import * as hal from '../../services/hal';
 import flushPromises from '../../testUtils/flushPromises';
+import { HalRestClient, HalResource } from 'hal-rest-client';
 
 jest.mock('./table', () => {
   return () => <div data-testid="mocked-table"></div>
 });
 
 describe('Main specs', () => {
+  const halRestClient = new HalRestClient();
+  
+  beforeEach(() => {
+    jest.spyOn(hal, 'getHalClient').mockReturnValue(halRestClient);
+  });
+  
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   it('should render a progress indicator when fetching the streams', async () => {
-    jest.spyOn(streamsApi, 'getStreams').mockResolvedValue([]);
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(new HalResource(halRestClient));
     const history = createMemoryHistory()
-    history.push('/streams');
+    history.push('/stream');
 
     const container = render(
       <Router history={history}>
-        <Route path="/streams">
+        <Route path="/stream">
           <Main />
         </Route>
       </Router>
@@ -30,12 +37,14 @@ describe('Main specs', () => {
     expect(container.getByRole('progressbar')).toBeTruthy();
 
     await act(async () => {
-      await streamsApi.getStreams;
+      await halRestClient.fetchResource;
     });
   });
 
   it('should render the streams table when streams are fetched', async () => {
-    jest.spyOn(streamsApi, 'getStreams').mockResolvedValue([]);
+    const halResourceWithMessages = new HalResource(halRestClient);
+    halResourceWithMessages.prop('streamStore:message', []);
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halResourceWithMessages);
 
     const container = render(
       <MemoryRouter>
@@ -50,13 +59,16 @@ describe('Main specs', () => {
   });
 
   it('should fetch the streams again when streamid changes', async () => {
-    jest.spyOn(streamsApi, 'getStreams').mockResolvedValue([]);
+    const halResourceWithMessages = new HalResource(halRestClient);
+    halResourceWithMessages.prop('streamStore:message', []);
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halResourceWithMessages);
+
     const history = createMemoryHistory()
-    history.push('/streams/1');
+    history.push('/stream/1');
 
     render(
       <Router history={history}>
-        <Route path="/streams/:streamId?">
+        <Route path="/stream/:streamId?">
           <Main />
         </Route>
       </Router>
@@ -64,18 +76,19 @@ describe('Main specs', () => {
 
     await act(async () => {
       await flushPromises();
-      history.push('/streams/2');
+      history.push('/stream/2');
       await flushPromises();
 
-      expect(streamsApi.getStreams).toHaveBeenCalledTimes(2);
-      expect(streamsApi.getStreams).toHaveBeenNthCalledWith(1, '1');
-      expect(streamsApi.getStreams).toHaveBeenNthCalledWith(2, '2');
+      expect(halRestClient.fetchResource).toHaveBeenCalledTimes(2);
+      expect(halRestClient.fetchResource).toHaveBeenNthCalledWith(1, './stream/1');
+      expect(halRestClient.fetchResource).toHaveBeenNthCalledWith(2, './stream/2');
     });
   });
 
   it('should render an error message when fetching failed', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => { });
-    jest.spyOn(streamsApi, 'getStreams').mockRejectedValue('');
+    jest.spyOn(halRestClient, 'fetchResource').mockRejectedValue('');
+
     const container = render(
       <MemoryRouter>
         <Main />
@@ -85,7 +98,7 @@ describe('Main specs', () => {
     expect(container.getByText(/An error occured while retrieving streams/)).toBeTruthy();
 
     await act(async () => {
-      await streamsApi.getStreams;
+      await halRestClient.fetchResource;
     });
   });
 });

@@ -73,8 +73,6 @@ export default function CustomizedInputBase(props: Props) {
   const onCloseSearchClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
     setSearchString('');
     setShowSearchInputField(false);
-    // history.push(props.halLinks['streamStore:feed-browser'].uri.fill());
-    console.log(location);
     history.push('/stream'); // TODO: we lost the link to the all streams from here
   };
 

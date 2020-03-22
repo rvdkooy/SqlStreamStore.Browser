@@ -3,18 +3,23 @@ import { MemoryRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
 import { StreamResponse } from '../../services/streamsApi';
 import Table from './table';
+import { HalResource, HalRestClient, URI } from 'hal-rest-client';
 
 describe('Streams table specs', () => {
   it('should render its data', () => {
-    const created = new Date().toUTCString();
-    const streams = [
-      StreamResponse.fromJson({ streamId: '1', messageId: '1', createdUtc: created, streamVersion: '1', type: '1', position: '1' }),
-      StreamResponse.fromJson({ streamId: '2', messageId: '2', createdUtc: created, streamVersion: '2', type: '2', position: '2' }),
-    ];
-    
+    const halClient = new HalRestClient();
+    const first = new HalResource(halClient);
+    first.prop('messageId', 1);
+    first.link('streamStore:feed', new HalResource(halClient, new URI('/stream/1')));
+    first.link('streamStore:message', new HalResource(halClient, new URI('/message/1')));
+    const second = new HalResource(halClient);
+    second.prop('messageId', 2);
+    second.link('streamStore:feed', new HalResource(halClient, new URI('/stream/2')));
+    second.link('streamStore:message', new HalResource(halClient, new URI('/message/2')));
+
     render(
       <MemoryRouter>
-        <Table streams={streams} />
+        <Table streams={[first, second]} />
       </MemoryRouter>
     );
 

@@ -58,8 +58,8 @@ const StreamsView = () => {
 
   const onDrawerCloseButtonClicked = () => {
     if (halResponse) {
-      console.log(halResponse.link('streamStore:feed').uri.uri)
-      history.push('../../' + halResponse.link('streamStore:feed').uri.uri);
+      console.log('../../' + halResponse.link('streamStore:feed').uri.uri);
+      history.push('../' + halResponse.link('streamStore:feed').uri.uri);
     }
   };
 

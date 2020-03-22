@@ -1,14 +1,22 @@
 import React from 'react';
+import { HalResource, URI, HalRestClient } from 'hal-rest-client';
 import { MemoryRouter, Router, Route } from 'react-router-dom';
 import { render, fireEvent, wait } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import SearchBar from './searchbar';
 
 describe('seachbar specs', () => {
+  const halLinks = {
+    first: new HalResource(new HalRestClient(), new URI('/first')),
+    previous: new HalResource(new HalRestClient(), new URI('/previous')),
+    next: new HalResource(new HalRestClient(), new URI('/next')),
+    last: new HalResource(new HalRestClient(), new URI('/last')),
+  };
+
   it('should by default show the command buttons', () => {
     const container = render(
       <MemoryRouter>
-        <SearchBar onSearchStreamId={jest.fn()} />
+        <SearchBar fromPosition="1" halLinks={halLinks} />
       </MemoryRouter>
     );
 
@@ -22,7 +30,7 @@ describe('seachbar specs', () => {
   it('should show the search input when search button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar onSearchStreamId={jest.fn()} />
+          <SearchBar fromPosition="1" halLinks={halLinks} />
         </MemoryRouter>
       );
 
@@ -37,11 +45,9 @@ describe('seachbar specs', () => {
   });
 
   it('should close the search input when close button is clicked', () => {
-    const onSearchStreamIdSpy = jest.fn();
-
     const container = render(
         <MemoryRouter>
-          <SearchBar onSearchStreamId={onSearchStreamIdSpy} />
+          <SearchBar fromPosition="1" halLinks={halLinks} />
         </MemoryRouter>
       );
 
@@ -50,22 +56,25 @@ describe('seachbar specs', () => {
     
     fireEvent.click(container.getByTestId('close-search-button'));
     expect(container.queryAllByTestId('search-container').length).toBeFalsy();
-    expect(onSearchStreamIdSpy).toHaveBeenCalledWith('');
   });
 
   it('should call onSearchStreamId when submitting the search string', () => {
-    const onSearchStreamIdSpy = jest.fn();
-    
+    const memoryHistory = createMemoryHistory();
+    const customHalLinks = {
+      ...halLinks,
+      ['streamStore:find']: new HalResource(new HalRestClient(), new URI('/find/{streamId}', true)),
+    }
+    jest.spyOn(memoryHistory, 'push');
     const container = render(
-        <MemoryRouter>
-          <SearchBar onSearchStreamId={onSearchStreamIdSpy} />
-        </MemoryRouter>
+        <Router history={memoryHistory}>
+          <SearchBar fromPosition="1" halLinks={customHalLinks} />
+        </Router>
       );
 
     fireEvent.click(container.getByTestId('open-search-button'));
     fireEvent.change(container.getByLabelText('Search for stream id'), { target: { value: '1234' } })
     fireEvent.submit(document.querySelector('form') as Element);
-    expect(onSearchStreamIdSpy).toHaveBeenCalledWith('1234');
+    expect(memoryHistory.push).toHaveBeenCalledWith('/find/1234');
   });
   
   it('should open the search input when the route contains a streamid', () => {
@@ -75,7 +84,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar onSearchStreamId={jest.fn()} />
+            <SearchBar fromPosition="1" halLinks={halLinks} />
           </Route>
         </Router>
       );
@@ -90,7 +99,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar onSearchStreamId={jest.fn()} />
+            <SearchBar fromPosition="1" halLinks={halLinks} />
           </Route>
         </Router>
       );

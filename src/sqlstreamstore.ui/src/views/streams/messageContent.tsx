@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import prettyPrintJson from 'pretty-print-json';
 import 'pretty-print-json/dist/pretty-print-json.css';
 import { HalResource } from 'hal-rest-client';
+import ErrorMessage from '../../components/errorMessage';
 
 const useStyles = makeStyles((theme) => ({
   jsonData: {
@@ -20,6 +21,14 @@ interface Props {
 }
 
 const MessageContent = (props: Props) => {
+  let prettyPrintedJsonData;
+
+  try {
+    prettyPrintedJsonData = prettyPrintJson.toHtml(props.halResource.prop('payload'));
+  } catch (err) {
+    console.warn(err);
+  }
+
   const classes = useStyles();
   return (
     <div>
@@ -42,7 +51,11 @@ const MessageContent = (props: Props) => {
       <div className={classes.propertyBlock}>
         <Typography variant="h6">Json Data:</Typography>
         <Paper className={classes.jsonData}>
-          <pre dangerouslySetInnerHTML={{ __html: prettyPrintJson.toHtml(props.halResource.prop('payload')) }}></pre>
+          {
+            (prettyPrintedJsonData) ?
+            <pre dangerouslySetInnerHTML={{ __html: prettyPrintedJsonData }}></pre> :
+              <ErrorMessage message="Unable to parse json data" />
+          }
         </Paper>
       </div>
     </div>
