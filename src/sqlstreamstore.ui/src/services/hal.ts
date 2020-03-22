@@ -4,7 +4,7 @@ let halClient: HalRestClient;
 
 export const createHalClient = (basename: string | null) => {
   console.log(basename);
-  halClient = createClient('', {
+  halClient = createClient('/', {
     validateStatus: function (status) {
       if (status === 404 || (status >= 200 && status < 300)) {
         return true;
@@ -19,7 +19,7 @@ export const createHalClient = (basename: string | null) => {
     let url =  options.url || '/';
     url = url.replace(/\.\.\//g, '');
     anchor.href = url;
-    options.url = anchor.origin + basename + 'hal/' + url;
+    options.url = anchor.origin + basename + 'hal' + url;
     console.log('rewritten HAL request: ' + options.url)
     return options;
   });
