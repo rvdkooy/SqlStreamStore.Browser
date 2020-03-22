@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props {
   onCloseButtonClicked: () => void;
-  version: string;
+  version?: string;
 }
 
 const MessageDrawer = (props: Props) => {
@@ -37,6 +37,7 @@ const MessageDrawer = (props: Props) => {
   const previousVersion = usePrevious(props.version);
   const halClient = getHalClient();
   const routeMatch = useRouteMatch();
+
   useEffect(() => {
     if (!props.version && previousVersion) {
       setHalResource(null);
@@ -44,13 +45,13 @@ const MessageDrawer = (props: Props) => {
       const retrieveMessage = async () => {
         try {
           updateStatus('loading');
-            const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}`);
-            setHalResource(fetchHalResponse);
-            updateStatus('done');
-          } catch (err) {
-            console.error(err);
-            updateStatus('error');
-          }
+          const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}`);
+          setHalResource(fetchHalResponse);
+          updateStatus('done');
+        } catch (err) {
+          console.error(err);
+          updateStatus('error');
+        }
       }
       retrieveMessage();
     }
