@@ -11,7 +11,6 @@ import SentimentDissatisfiedIcon from '@material-ui/icons/SentimentDissatisfied'
 import FilterList from '@material-ui/icons/FilterList';
 import FormatListBulletedOutlinedIcon from '@material-ui/icons/FormatListBulletedOutlined';
 import { makeStyles, Typography } from '@material-ui/core';
-// import { StreamResponse } from '../../services/streamsApi';
 import { HalResource } from 'hal-rest-client';
 
 interface Props {

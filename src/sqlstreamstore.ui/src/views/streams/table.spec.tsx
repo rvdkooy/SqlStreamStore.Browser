@@ -1,7 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
-import { StreamResponse } from '../../services/streamsApi';
 import Table from './table';
 import { HalResource, HalRestClient, URI } from 'hal-rest-client';
 
