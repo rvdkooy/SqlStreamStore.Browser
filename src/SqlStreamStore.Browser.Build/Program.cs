@@ -70,6 +70,7 @@ namespace build
 
                 var apiKey = Environment.GetEnvironmentVariable("NUGET_API_KEY");
 
+
                 if (string.IsNullOrWhiteSpace(apiKey))
                 {
                     Console.WriteLine("API key not available. Packages will not be pushed.");
