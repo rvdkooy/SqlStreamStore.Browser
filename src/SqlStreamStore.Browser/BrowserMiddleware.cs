@@ -25,15 +25,14 @@ namespace SqlStreamStore.Browser
             var staticFilesDir = Path.Combine(currentDir, "../../../../sqlstreamstore.ui/build");
 
             return builder
-                
+                .Map("/hal", innerBuilder =>
+                {
+                    innerBuilder.UseSqlStreamStoreHal(streamStore);
+                })
                 .UseStaticFiles(new StaticFileOptions()
                 {
                     FileProvider = new EmbeddedFileProvider(currentAssembly, currentNamespace),
                     
-                })
-                .Map("/hal", innerBuilder =>
-                {
-                    innerBuilder.UseSqlStreamStoreHal(streamStore);
                 })
                 .Map("", innerBuilder =>
                 {
