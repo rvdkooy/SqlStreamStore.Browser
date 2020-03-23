@@ -1,9 +1,10 @@
 import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
-import { StreamMessage } from '../../services/streamsApi';
 import prettyPrintJson from 'pretty-print-json';
 import 'pretty-print-json/dist/pretty-print-json.css';
+import { HalResource } from 'hal-rest-client';
+import ErrorMessage from '../../components/errorMessage';
 
 const useStyles = makeStyles((theme) => ({
   jsonData: {
@@ -16,33 +17,45 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-  streamMessage: StreamMessage;
+  halResource: HalResource;
 }
 
 const MessageContent = (props: Props) => {
+  let prettyPrintedJsonData;
+
+  try {
+    prettyPrintedJsonData = prettyPrintJson.toHtml(props.halResource.prop('payload'));
+  } catch (err) {
+    console.warn(err);
+  }
+
   const classes = useStyles();
   return (
     <div>
       <div className={classes.propertyBlock}>
         <Typography variant="h6">Stream ID:</Typography>
-        <Typography>{props.streamMessage.streamId}</Typography>
+        <Typography>{props.halResource.prop('streamId')}</Typography>
       </div>
       <div className={classes.propertyBlock}>
         <Typography variant="h6">message ID:</Typography>
-        <Typography>{props.streamMessage.messageId}</Typography>
+        <Typography>{props.halResource.prop('messageId')}</Typography>
       </div>
       <div className={classes.propertyBlock}>
         <Typography variant="h6">Created:</Typography>
-        <Typography>{props.streamMessage.createdUtc}</Typography>
+        <Typography>{props.halResource.prop('createdUtc')}</Typography>
       </div>
       <div className={classes.propertyBlock}>
         <Typography variant="h6">Type:</Typography>
-        <Typography>{props.streamMessage.type}</Typography>
+        <Typography>{props.halResource.prop('type')}</Typography>
       </div>
       <div className={classes.propertyBlock}>
         <Typography variant="h6">Json Data:</Typography>
         <Paper className={classes.jsonData}>
-          <pre dangerouslySetInnerHTML={{ __html: prettyPrintJson.toHtml(JSON.parse(props.streamMessage.jsonData)) }}></pre>
+          {
+            (prettyPrintedJsonData) ?
+            <pre dangerouslySetInnerHTML={{ __html: prettyPrintedJsonData }}></pre> :
+              <ErrorMessage message="Unable to parse json data" />
+          }
         </Paper>
       </div>
     </div>

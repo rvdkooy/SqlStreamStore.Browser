@@ -12,7 +12,7 @@ namespace build
         private const string ArtifactsDir = "artifacts";
         private const string DotnetBuild = "dotnetbuild";
         private const string YarnBuild = "yarnbuild";
-        private const string DotnetTest = "dotnettest";
+        // private const string DotnetTest = "dotnettest";
         private const string YarnTest = "yarntest";
         private const string Pack = "pack";
         private const string Publish = "publish";
@@ -24,29 +24,27 @@ namespace build
 
             Target(YarnBuild, () => Run("yarn", "--cwd ./src/sqlstreamstore.ui build"));
 
-            Target(
-                DotnetTest,
-                DependsOn(DotnetBuild),
-                ForEach(    
-                    "SqlStreamStore.Browser.Tests"
-                ), 
-                project =>
-                {
-                    try
-                    {
-                        Run("dotnet",
-                            $"test src/{project}/{project}.csproj --configuration=Release --no-build --no-restore --verbosity=normal");
-                    }
-                    catch (NonZeroExitCodeException)
-                    {
-                        s_oneOrMoreTestsFailed = true;
-                    }
-                });
+            // Target(
+            //     DotnetTest,
+            //     DependsOn(DotnetBuild),
+            //     ForEach(    
+            //         "SqlStreamStore.Browser.Tests"
+            //     ), 
+            //     project =>
+            //     {
+            //         try
+            //         {
+            //             Run("dotnet",
+            //                 $"test src/{project}/{project}.csproj --configuration=Release --no-build --no-restore --verbosity=normal");
+            //         }
+            //         catch (NonZeroExitCodeException)
+            //         {
+            //             s_oneOrMoreTestsFailed = true;
+            //         }
+            //     });
             
             Target(
-                YarnTest,
-                DependsOn(YarnBuild),
-                () => {
+                YarnTest, () => {
                     try {
                         Run("yarn", "--cwd ./src/sqlstreamstore.ui test --watchAll=false");
                     }
@@ -59,35 +57,34 @@ namespace build
 
             Target(
                 Pack,
-                DependsOn(YarnTest, DotnetTest),
+                DependsOn(YarnBuild, DotnetBuild, YarnTest),
                 ForEach(
                     "SqlStreamStore.Browser"
                 ),
                 project => Run("dotnet", $"pack src/{project}/{project}.csproj -c Release -o ./{ArtifactsDir} --no-build"));
 
-            // Target(Publish, DependsOn(Pack), () =>
-            // {
-            //     var packagesToPush = Directory.GetFiles($"../{ArtifactsDir}", "*.nupkg", SearchOption.TopDirectoryOnly);
-            //     Console.WriteLine($"Found packages to publish: {string.Join("; ", packagesToPush)}");
+            Target(Publish, DependsOn(Pack), () =>
+            {
+                var packagesToPush = Directory.GetFiles($"./{ArtifactsDir}", "*.nupkg", SearchOption.TopDirectoryOnly);
+                Console.WriteLine($"Found packages to publish: {string.Join("; ", packagesToPush)}");
 
-            //     var apiKey = Environment.GetEnvironmentVariable("FEEDZ_SSS_API_KEY");
+                var apiKey = Environment.GetEnvironmentVariable("NUGET_API_KEY");
 
-            //     if (string.IsNullOrWhiteSpace(apiKey))
-            //     {
-            //         Console.WriteLine("Feedz API key not available. Packages will not be pushed.");
-            //         return;
-            //     }
 
-            //     foreach (var packageToPush in packagesToPush)
-            //     {
-            //         Run("dotnet", $"nuget push {packageToPush} -s https://f.feedz.io/logicality/streamstore-ci/nuget/index.json -k {apiKey} --skip-duplicate", noEcho: true);
-            //     }
-            // });
+                if (string.IsNullOrWhiteSpace(apiKey))
+                {
+                    Console.WriteLine("API key not available. Packages will not be pushed.");
+                    return;
+                }
+
+                foreach (var packageToPush in packagesToPush)
+                {
+                    Run("dotnet", $"nuget push {packageToPush} -k {apiKey} --skip-duplicate", noEcho: true);
+                }
+            });
 
             Target("default",
-                // DependsOn(Test, Publish),
-                DependsOn(Pack),
-                () =>
+                DependsOn(Pack, Publish), () =>
                 {
                     if (s_oneOrMoreTestsFailed)
                     {

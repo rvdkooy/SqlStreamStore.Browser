@@ -1,21 +1,28 @@
 import React from 'react';
+import { Switch, Route } from "react-router-dom";
+import DashBoard from './views/dashboard/dashboard';
+import StreamsView from './views/streams/main';
 import { BrowserRouter } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core';
 import Header from './components/header/header';
-import MainContent from './components/mainContent/mainContent';
-import { setBasePath } from './services/streamsApi';
+import { createHalClient } from './services/hal';
 import 'typeface-roboto';
 
 const useStyles = makeStyles({
   root: {
     display: 'flex',
   },
+  content: {
+    marginTop: '60px',
+    flexGrow: 1,
+    height: '100vh',
+  },
 });
 
 const baseElement = document.querySelector('base');
 const basename = baseElement ? baseElement.getAttribute('href') : '/';
-setBasePath(basename);
+createHalClient(basename);
 
 function App() {
   const classes = useStyles();
@@ -24,7 +31,16 @@ function App() {
       <div className={classes.root}>
         <CssBaseline />
         <Header />
-        <MainContent />
+        <main className={classes.content}>
+          <Switch>
+            <Route exact path="/">
+              <DashBoard />
+            </Route>
+            <Route path="/(stream|streams)/:streamId?/:version?">
+              <StreamsView />
+            </Route>
+          </Switch>
+        </main>
       </div>
     </BrowserRouter>
   );

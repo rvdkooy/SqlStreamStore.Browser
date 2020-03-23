@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import usePrevious from '../../components/hooks/usePrevious'
+import { useRouteMatch } from 'react-router-dom';
+import usePrevious from '../../components/hooks/usePrevious';
 import { makeStyles } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import ErrorMessage from '../../components/errorMessage';
 import ProgressIndicator from '../../components/progressIndicator';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import streamsApi, { StreamMessage } from '../../services/streamsApi';
 import MessageContent from './messageContent';
+import { HalResource } from 'hal-rest-client';
+import { getHalClient } from '../../services/hal';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -25,37 +27,38 @@ const useStyles = makeStyles((theme) => ({
 
 interface Props {
   onCloseButtonClicked: () => void;
-  streamId: string;
-  messageId?: string;
+  version?: string;
 }
 
 const MessageDrawer = (props: Props) => {
   const classes = useStyles();
   const [status, updateStatus] = useState('loading');
-  const [streamMessage, setStreamMessage] = useState<StreamMessage | null>(null);
-  const previousMessageId = usePrevious(props.messageId);
+  const [halResource, setHalResource] = useState<HalResource | null>();
+  const previousVersion = usePrevious(props.version);
+  const halClient = getHalClient();
+  const routeMatch = useRouteMatch();
 
   useEffect(() => {
-    if (!props.messageId && previousMessageId) {
-      setStreamMessage(null);
-    } else if (previousMessageId !== props.messageId) {
-      const retrieveMessage = async (streamId: string, messageId: string) => {
+    if (!props.version && previousVersion) {
+      setHalResource(null);
+    } else if (previousVersion !== props.version) {
+      const retrieveMessage = async () => {
         try {
           updateStatus('loading');
-          const message = await streamsApi.getMessage(streamId, messageId);
-          setStreamMessage(message);
+          const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}`);
+          setHalResource(fetchHalResponse);
           updateStatus('done');
         } catch (err) {
           console.error(err);
           updateStatus('error');
         }
       }
-      retrieveMessage(props.streamId, props.messageId);
+      retrieveMessage();
     }
-  }, [props.streamId, props.messageId, previousMessageId]);
+  }, [props.version, previousVersion, halClient, routeMatch.url]);
 
   return (
-    <Drawer anchor="right" open={!!props.messageId} >
+    <Drawer anchor="right" open={!!props.version} >
       <div className={classes.drawerHeader}>
         <IconButton onClick={props.onCloseButtonClicked}>
           <CloseIcon />
@@ -67,7 +70,7 @@ const MessageDrawer = (props: Props) => {
         role="presentation"
       >
         {
-          (status === 'done' && streamMessage) ? <MessageContent streamMessage={streamMessage} /> : null
+          (status === 'done' && halResource) ? <MessageContent halResource={halResource} /> : null
         }
         {
           (status === 'loading') ? <ProgressIndicator /> : null

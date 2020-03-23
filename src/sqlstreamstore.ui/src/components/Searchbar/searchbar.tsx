@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -13,6 +13,7 @@ import FirstPageIcon from '@material-ui/icons/FirstPage';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import { Typography } from '@material-ui/core';
 import usePrevious from '../hooks/usePrevious';
+import { HalResource } from 'hal-rest-client';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -32,15 +33,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface Props {
-  onSearchStreamId: (streamId: string) => void;
+  halLinks: { [key: string]: HalResource };
+  fromPosition: string;
 }
 
 export default function CustomizedInputBase(props: Props) {
   const classes = useStyles();
+  const history = useHistory();
   const [showSearchInputField, setShowSearchInputField] = useState(false);
   const [searchString, setSearchString] = useState('');
   const params = useParams<{ streamId: string }>();
-
   const prevStreamId = usePrevious(params.streamId);
   
   useEffect(() => {
@@ -64,13 +66,13 @@ export default function CustomizedInputBase(props: Props) {
 
   const onSearchSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault();
-    props.onSearchStreamId(searchString);
+    history.push(props.halLinks['streamStore:find'].uri.fill({ streamId: searchString }));
   };
 
   const onCloseSearchClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
     setSearchString('');
-    props.onSearchStreamId('');
     setShowSearchInputField(false);
+    history.push('/stream'); // TODO: we lost the link to the all streams from here
   };
 
   return (
@@ -91,10 +93,10 @@ export default function CustomizedInputBase(props: Props) {
               onChange={onSearchChange}
             />
             <IconButton
-              data-testid="close-search-button"
-              type="button"
               onClick={onCloseSearchClicked}
+              data-testid="close-search-button"
               aria-label="close search"
+              title="Close search"
             >
               <ClearIcon />
             </IconButton>
@@ -114,34 +116,46 @@ export default function CustomizedInputBase(props: Props) {
 
             <IconButton
               onClick={() => { }}
-              disabled={true}
+              disabled={!props.halLinks.first}
               aria-label="first page"
               data-testid="first-page-button"
+              component={Link}
+              to={props.halLinks.first ? props.halLinks.first.uri.uri : '#'}
+              title="First page"
             >
               <FirstPageIcon />
             </IconButton>
             <IconButton
               onClick={() => { }}
-              disabled={true}
+              disabled={!props.halLinks.previous}
               aria-label="previous page"
               data-testid="previous-page-button"
+              component={Link}
+              to={props.halLinks.previous ? props.halLinks.previous.uri.uri : '#'}
+              title="Previous page"
             >
               <KeyboardArrowLeft />
             </IconButton>
-            <Typography>page 1</Typography>
+            <Typography>{ `from position ${props.fromPosition}` }</Typography>
             <IconButton
               onClick={() => { }}
-              disabled={true}
+              disabled={!props.halLinks.next}
               aria-label="next page"
               data-testid="next-page-button"
+              component={Link}
+              to={props.halLinks.next ? props.halLinks.next.uri.uri : '#'}
+              title="Next page"
             >
               <KeyboardArrowRight />
             </IconButton>
             <IconButton
               onClick={() => { }}
-              disabled={true}
+              disabled={!props.halLinks.last}
               aria-label="last page"
               data-testid="last-page-button"
+              component={Link}
+              to={props.halLinks.last ? props.halLinks.last.uri.uri : '#' }
+              title="Last page"
             >
               <LastPageIcon />
             </IconButton>
