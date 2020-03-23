@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useHistory, useLocation, Link } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -40,7 +40,6 @@ interface Props {
 export default function CustomizedInputBase(props: Props) {
   const classes = useStyles();
   const history = useHistory();
-  const location = useLocation();
   const [showSearchInputField, setShowSearchInputField] = useState(false);
   const [searchString, setSearchString] = useState('');
   const params = useParams<{ streamId: string }>();
