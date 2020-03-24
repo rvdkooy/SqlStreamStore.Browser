@@ -63,28 +63,28 @@ namespace build
                 ),
                 project => Run("dotnet", $"pack src/{project}/{project}.csproj -c Release -o ./{ArtifactsDir} --no-build"));
 
-            Target(Publish, DependsOn(Pack), () =>
-            {
-                var packagesToPush = Directory.GetFiles($"./{ArtifactsDir}", "*.nupkg", SearchOption.TopDirectoryOnly);
-                Console.WriteLine($"Found packages to publish: {string.Join("; ", packagesToPush)}");
+            // Target(Publish, DependsOn(Pack), () =>
+            // {
+            //     var packagesToPush = Directory.GetFiles($"./{ArtifactsDir}", "*.nupkg", SearchOption.TopDirectoryOnly);
+            //     Console.WriteLine($"Found packages to publish: {string.Join("; ", packagesToPush)}");
 
-                var apiKey = Environment.GetEnvironmentVariable("NUGET_API_KEY");
+            //     var apiKey = Environment.GetEnvironmentVariable("NUGET_API_KEY");
 
 
-                if (string.IsNullOrWhiteSpace(apiKey))
-                {
-                    Console.WriteLine("API key not available. Packages will not be pushed.");
-                    return;
-                }
+            //     if (string.IsNullOrWhiteSpace(apiKey))
+            //     {
+            //         Console.WriteLine("API key not available. Packages will not be pushed.");
+            //         return;
+            //     }
 
-                foreach (var packageToPush in packagesToPush)
-                {
-                    Run("dotnet", $"nuget push {packageToPush} -k {apiKey} -s https://api.nuget.org/v3/index.json --skip-duplicate", noEcho: true);
-                }
-            });
+            //     foreach (var packageToPush in packagesToPush)
+            //     {
+            //         Run("dotnet", $"nuget push {packageToPush} -k {apiKey} -s https://api.nuget.org/v3/index.json --skip-duplicate", noEcho: true);
+            //     }
+            // });
 
             Target("default",
-                DependsOn(Pack, Publish), () =>
+                DependsOn(Pack), () =>
                 {
                     if (s_oneOrMoreTestsFailed)
                     {
