@@ -44,7 +44,6 @@ namespace SqlStreamStore.Browser
                             var html = reader.ReadToEnd();
                             html = html
                                 .Replace("<head>", $"<head><base href=\"{context.Request.PathBase}/\" />");
-                                // .Replace("<head>", $"<head><meta name=\"basename\" content=\"{context.Request.PathBase}\" />");
                             context.Response.ContentType = "text/html; charset=UTF-8";
                             await context.Response.WriteAsync(html);
                         }                        
