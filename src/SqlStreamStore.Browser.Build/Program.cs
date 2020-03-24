@@ -79,7 +79,7 @@ namespace build
 
                 foreach (var packageToPush in packagesToPush)
                 {
-                    Run("dotnet", $"nuget push {packageToPush} -k {apiKey} --skip-duplicate", noEcho: true);
+                    Run("dotnet", $"nuget push {packageToPush} -k {apiKey} -s https://api.nuget.org/v3/index.json --skip-duplicate", noEcho: true);
                 }
             });
 
