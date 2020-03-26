@@ -2,7 +2,7 @@
 
 <span>ASP.NET</span> core UI to browse a SqlStreamStore.
 
-<img style="border: 1px solid;max-width:75%" src="docs/dashboard_screen.png" alt="Screenshot of SqlStreamStore dashboard">
+<img src="docs/dashboard_screen.png" alt="Screenshot of SqlStreamStore dashboard">
 
 ## installation
 
