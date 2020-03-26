@@ -2,7 +2,7 @@
 
 <span>ASP.NET</span> core UI to browse a SqlStreamStore.
 
-<img src="docs/dashboard_screen.png" alt="Screenshot of SqlStreamStore dashboard">
+<img src="docs/hero.png" alt="Screenshot of SqlStreamStore hero">
 
 ## installation
 
@@ -50,3 +50,8 @@ yarn start
 ```
 
 Enjoy!
+
+## Screens
+
+[[docs/dashboard_screen.png|width=640px|alt="Screenshot of SqlStreamStore dashboard"]]
+[[docs/streams_screen.png|width=640px|alt="Screenshot of SqlStreamStore streams page"]]
