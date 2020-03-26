@@ -53,5 +53,4 @@ Enjoy!
 
 ## Screens
 
-[[docs/dashboard_screen.png|width=640px|alt="Screenshot of SqlStreamStore dashboard"]]
-[[docs/streams_screen.png|width=640px|alt="Screenshot of SqlStreamStore streams page"]]
+<img src="docs/dashboard_screen.png" alt="Screenshot of SqlStreamStore dashboard" width="480"> <img src="docs/streams_screen.png" alt="Screenshot of SqlStreamStore streams page" width="480">
