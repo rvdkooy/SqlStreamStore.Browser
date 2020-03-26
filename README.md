@@ -2,7 +2,7 @@
 
 <span>ASP.NET</span> core UI to browse a SqlStreamStore.
 
-<img style="border: 1px solid" src="docs/dashboard_screen.png" alt="Screenshot of SqlStreamStore dashboard">
+<img style="border: 1px solid;max-width:75%" src="docs/dashboard_screen.png" alt="Screenshot of SqlStreamStore dashboard">
 
 ## installation
 
@@ -18,7 +18,7 @@ Startup
 
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
-    app.UseSqlStreamStoreHal(streamStoreInstance);
+    app.UseSqlStreamStoreBrowser(streamStoreInstance);
 }
 
 public void ConfigureServices(IServiceCollection services)
