@@ -1,6 +1,0 @@
-language: minimal
-sudo: required
-dist: trusty
-script: "./build.sh --travis"
-git:
-  depth: false
