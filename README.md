@@ -1,4 +1,4 @@
-# SqlStreamStore.Browser
+# SqlStreamStore.Browser ![CI](https://github.com/rvdkooy/SqlStreamStore.Browser/workflows/CI/badge.svg)
 
 <span>ASP.NET</span> core UI to browse a SqlStreamStore.
 
