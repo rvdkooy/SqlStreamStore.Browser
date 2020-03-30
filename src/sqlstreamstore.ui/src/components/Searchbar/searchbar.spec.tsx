@@ -16,7 +16,7 @@ describe('seachbar specs', () => {
   it('should by default show the command buttons', () => {
     const container = render(
       <MemoryRouter>
-        <SearchBar fromPosition="1" halLinks={halLinks} />
+        <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
       </MemoryRouter>
     );
 
@@ -30,7 +30,7 @@ describe('seachbar specs', () => {
   it('should show the search input when search button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar fromPosition="1" halLinks={halLinks} />
+          <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
         </MemoryRouter>
       );
 
@@ -47,7 +47,7 @@ describe('seachbar specs', () => {
   it('should close the search input when close button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar fromPosition="1" halLinks={halLinks} />
+          <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
         </MemoryRouter>
       );
 
@@ -67,7 +67,7 @@ describe('seachbar specs', () => {
     jest.spyOn(memoryHistory, 'push');
     const container = render(
         <Router history={memoryHistory}>
-          <SearchBar fromPosition="1" halLinks={customHalLinks} />
+          <SearchBar fromPosition="1" halLinks={customHalLinks} onDelete={() => {}} />
         </Router>
       );
 
@@ -84,13 +84,47 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar fromPosition="1" halLinks={halLinks} />
+            <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
           </Route>
         </Router>
       );
 
     expect(container.getByTestId('search-container')).toBeTruthy();
   });
+
+  it('should show delete stream button when the route contains a streamid', () => {
+    const history = createMemoryHistory()
+    history.push('/streams/streamid');
+    
+    const container = render(
+        <Router history={history}>
+          <Route path="/streams/:streamId?">
+            <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
+          </Route>
+        </Router>
+      );
+
+    expect(container.getByTestId('delete-stream-button')).toBeTruthy();
+  });
+
+  // it('should call onDelete when delete stream is confirmed', () => {
+  //   const onDeleteSpy = jest.fn();
+    
+  //   const history = createMemoryHistory()
+  //   history.push('/streams/streamid');
+    
+  //   const container = render(
+  //       <Router history={history}>
+  //         <Route path="/streams/:streamId?">
+  //           <SearchBar fromPosition="1" halLinks={halLinks} onDelete={onDeleteSpy} />
+  //         </Route>
+  //       </Router>
+  //     );
+    
+  //   fireEvent.click(container.getByTestId('delete-stream-button'));
+  //   fireEvent.click(document.querySelectorAll('confirm-button')[0]);
+  //   expect(onDeleteSpy).toHaveBeenCalled();
+  // });
 
   it('should close the search input when the route removes a streamid', async () => {
     const history = createMemoryHistory()
@@ -99,7 +133,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar fromPosition="1" halLinks={halLinks} />
+            <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
           </Route>
         </Router>
       );

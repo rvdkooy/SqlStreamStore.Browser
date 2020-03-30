@@ -44,6 +44,7 @@ const StreamsView = () => {
           } else {
             updateMessages(streamStoreMessage);
           }
+
           updateHalResponse(fetchHalResponse);
           updateStatus('done');
         }
@@ -78,6 +79,7 @@ const StreamsView = () => {
               <Searchbar
                 halLinks={halResponse.links}
                 fromPosition={halResponse.prop('fromPosition')}
+                onDelete={() => {}}
               />
             </div>
             <StreamsTable streams={messages} />
