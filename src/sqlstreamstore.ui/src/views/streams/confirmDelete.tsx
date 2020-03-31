@@ -25,7 +25,7 @@ const ConfirmDelete = (props: Props) => {
         <Button onClick={props.onClose} color="primary">
           Cancel
           </Button>
-        <Button onClick={props.onConfirm} variant="contained" color="secondary">
+        <Button data-testid="confirm-deletestream-button" onClick={props.onConfirm} variant="contained" color="secondary">
           OK
         </Button>
       </DialogActions>

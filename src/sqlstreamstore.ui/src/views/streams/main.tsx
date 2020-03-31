@@ -23,7 +23,7 @@ const StreamsView = () => {
   const classes = useStyles();
   const history = useHistory();
   const params = useParams<{ streamId: string, version: string }>();
-  const [halResponse, updateHalResponse] = useState<HalResource>();
+  const [halState, updateHalState] = useState<HalResource>();
   const [messages, updateMessages] = useState<HalResource[]>([]);
   const [status, updateStatus] = useState('loading');
   const previousStreamId = usePrevious(params.streamId);
@@ -45,7 +45,7 @@ const StreamsView = () => {
             updateMessages(streamStoreMessage);
           }
 
-          updateHalResponse(fetchHalResponse);
+          updateHalState(fetchHalResponse);
           updateStatus('done');
         }
       } catch (err) {
@@ -58,8 +58,8 @@ const StreamsView = () => {
   }, [params, routeMatch, halClient, queryStrings, previousStreamId]);
 
   const onDrawerCloseButtonClicked = () => {
-    if (halResponse) {
-      history.push('../' + halResponse.link('streamStore:feed').uri.uri);
+    if (halState) {
+      history.push('../' + halState.link('streamStore:feed').uri.uri);
     }
   };
 
@@ -73,13 +73,11 @@ const StreamsView = () => {
         (status === 'error') ? <ErrorMessage message="An error occured while retrieving streams" /> : null
       }
       {
-        (status === 'done' && halResponse) ?
+        (status === 'done' && halState) ?
           <div>
             <div className={classes.searchContainer}>
               <Searchbar
-                halLinks={halResponse.links}
-                fromPosition={halResponse.prop('fromPosition')}
-                onDelete={() => {}}
+                halState={halState}
               />
             </div>
             <StreamsTable streams={messages} />

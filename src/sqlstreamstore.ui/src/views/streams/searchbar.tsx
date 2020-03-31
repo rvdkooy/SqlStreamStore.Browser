@@ -37,12 +37,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface Props {
-  halLinks: { [key: string]: HalResource };
-  fromPosition: string;
-  onDelete: () => void;
+  halState: HalResource;
 }
 
 export default function SearchBar(props: Props) {
+  const { halState } = props;
   const classes = useStyles();
   const history = useHistory();
   const [showSearchInputField, updateShowSearchInputField] = useState(false);
@@ -64,7 +63,7 @@ export default function SearchBar(props: Props) {
 
   const onSearchSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault();
-    history.push(props.halLinks['streamStore:find'].uri.fill({ streamId: searchString }));
+    history.push(halState.link('streamStore:find').uri.fill({ streamId: searchString }));
   };
 
   const onCloseSearchClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -126,42 +125,42 @@ export default function SearchBar(props: Props) {
             <Divider orientation="vertical" flexItem />
 
             <IconButton
-              disabled={!props.halLinks.first}
+              disabled={!halState.link('first')}
               aria-label="first page"
               data-testid="first-page-button"
               component={Link}
-              to={props.halLinks.first ? props.halLinks.first.uri.uri : '#'}
+              to={halState.link('first') ? halState.link('first').uri.uri : '#'}
               title="First page"
             >
               <FirstPage />
             </IconButton>
             <IconButton
-              disabled={!props.halLinks.previous}
+              disabled={!halState.link('previous')}
               aria-label="previous page"
               data-testid="previous-page-button"
               component={Link}
-              to={props.halLinks.previous ? props.halLinks.previous.uri.uri : '#'}
+              to={halState.link('previous') ? halState.link('previous').uri.uri : '#'}
               title="Previous page"
             >
               <KeyboardArrowLeft />
             </IconButton>
-            <Typography>{`from position ${props.fromPosition}`}</Typography>
+            <Typography>{`from position ${props.halState.prop('fromPosition')}`}</Typography>
             <IconButton
-              disabled={!props.halLinks.next}
+              disabled={!halState.link('next')}
               aria-label="next page"
               data-testid="next-page-button"
               component={Link}
-              to={props.halLinks.next ? props.halLinks.next.uri.uri : '#'}
+              to={halState.link('next') ? halState.link('next').uri.uri : '#'}
               title="Next page"
             >
               <KeyboardArrowRight />
             </IconButton>
             <IconButton
-              disabled={!props.halLinks.last}
+              disabled={!halState.link('last')}
               aria-label="last page"
               data-testid="last-page-button"
               component={Link}
-              to={props.halLinks.last ? props.halLinks.last.uri.uri : '#'}
+              to={halState.link('last') ? halState.link('last').uri.uri : '#'}
               title="Last page"
             >
               <LastPage />

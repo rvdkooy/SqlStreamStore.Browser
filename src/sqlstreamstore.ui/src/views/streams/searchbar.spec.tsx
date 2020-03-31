@@ -6,17 +6,18 @@ import { createMemoryHistory } from 'history';
 import SearchBar from './searchbar';
 
 describe('seachbar specs', () => {
-  const halLinks = {
-    first: new HalResource(new HalRestClient(), new URI('/first')),
-    previous: new HalResource(new HalRestClient(), new URI('/previous')),
-    next: new HalResource(new HalRestClient(), new URI('/next')),
-    last: new HalResource(new HalRestClient(), new URI('/last')),
-  };
+  const halRestClient = new HalRestClient();
+  const halState = new HalResource(halRestClient);
+  halState.link('first', new HalResource(new HalRestClient(), new URI('/first')));
+  halState.link('previous', new HalResource(new HalRestClient(), new URI('/previous')));
+  halState.link('next', new HalResource(new HalRestClient(), new URI('/next')));
+  halState.link('last', new HalResource(new HalRestClient(), new URI('/last')));
+  halState.prop('fromPosition', '1');
 
   it('should by default show the command buttons', () => {
     const container = render(
       <MemoryRouter>
-        <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
+        <SearchBar halState={halState} />
       </MemoryRouter>
     );
 
@@ -30,7 +31,7 @@ describe('seachbar specs', () => {
   it('should show the search input when search button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
+          <SearchBar halState={halState} />
         </MemoryRouter>
       );
 
@@ -47,7 +48,7 @@ describe('seachbar specs', () => {
   it('should close the search input when close button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
+          <SearchBar halState={halState} />
         </MemoryRouter>
       );
 
@@ -60,14 +61,15 @@ describe('seachbar specs', () => {
 
   it('should call onSearchStreamId when submitting the search string', () => {
     const memoryHistory = createMemoryHistory();
-    const customHalLinks = {
-      ...halLinks,
-      ['streamStore:find']: new HalResource(new HalRestClient(), new URI('/find/{streamId}', true)),
-    }
+    
+    const customHalState = new HalResource(halRestClient);
+    customHalState.link('streamStore:find', new HalResource(new HalRestClient(), new URI('/find/{streamId}', true)));
+    customHalState.prop('fromPosition', '1');
+
     jest.spyOn(memoryHistory, 'push');
     const container = render(
         <Router history={memoryHistory}>
-          <SearchBar fromPosition="1" halLinks={customHalLinks} onDelete={() => {}} />
+          <SearchBar halState={customHalState} />
         </Router>
       );
 
@@ -84,7 +86,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
+            <SearchBar halState={halState} />
           </Route>
         </Router>
       );
@@ -99,7 +101,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
+            <SearchBar halState={halState} />
           </Route>
         </Router>
       );
@@ -107,7 +109,7 @@ describe('seachbar specs', () => {
     expect(container.getByTestId('delete-stream-button')).toBeTruthy();
   });
 
-  // it('should call onDelete when delete stream is confirmed', () => {
+  // it('should delete when delete stream is confirmed', () => {
   //   const onDeleteSpy = jest.fn();
     
   //   const history = createMemoryHistory()
@@ -116,13 +118,13 @@ describe('seachbar specs', () => {
   //   const container = render(
   //       <Router history={history}>
   //         <Route path="/streams/:streamId?">
-  //           <SearchBar fromPosition="1" halLinks={halLinks} onDelete={onDeleteSpy} />
+  //           <SearchBar halState={halState} />
   //         </Route>
   //       </Router>
   //     );
     
   //   fireEvent.click(container.getByTestId('delete-stream-button'));
-  //   fireEvent.click(document.querySelectorAll('confirm-button')[0]);
+  //   fireEvent.click(container.getByTestId('confirm-deletestream-button'));
   //   expect(onDeleteSpy).toHaveBeenCalled();
   // });
 
@@ -133,7 +135,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar fromPosition="1" halLinks={halLinks} onDelete={() => {}} />
+            <SearchBar halState={halState} />
           </Route>
         </Router>
       );
