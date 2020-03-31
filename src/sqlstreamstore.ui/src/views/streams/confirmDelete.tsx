@@ -8,28 +8,29 @@ import Button from '@material-ui/core/Button';
 
 interface Props {
   open: boolean;
-  onClose: () =>  void;
-  title: string;
-  children: JSX.Element | JSX.Element[];
+  onClose: () => void;
+  onConfirm: () => void;
 }
 
-const Modal = (props: Props) => {
+const ConfirmDelete = (props: Props) => {
   return (
     <Dialog open={props.open} onClose={props.onClose} aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">{ props.title }</DialogTitle>
+      <DialogTitle id="form-dialog-title">Are you absolutely sure?</DialogTitle>
       <DialogContent>
-        { props.children }
+        <DialogContentText>
+          This action cannot be undone. This will permanently delete the stream.
+        </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onClose} color="primary">
           Cancel
           </Button>
-        <Button onClick={() => {}} variant="contained" color="secondary">
+        <Button onClick={props.onConfirm} variant="contained" color="secondary">
           OK
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 };
 
-export default Modal;
+export default ConfirmDelete;

@@ -6,16 +6,12 @@ import Button from '@material-ui/core/Button';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
-import ClearIcon from '@material-ui/icons/Clear';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import LastPageIcon from '@material-ui/icons/LastPage';
+import { FirstPage, LastPage, KeyboardArrowLeft,
+  KeyboardArrowRight, Search, Clear } from '@material-ui/icons';
 import { Typography } from '@material-ui/core';
-import usePrevious from '../hooks/usePrevious';
+import usePrevious from '../../components/hooks/usePrevious';
 import { HalResource } from 'hal-rest-client';
-import Modal from '../modal/modal';
+import ConfirmDeleteModal from './confirmDelete';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,30 +45,22 @@ interface Props {
 export default function SearchBar(props: Props) {
   const classes = useStyles();
   const history = useHistory();
-  const [showSearchInputField, setShowSearchInputField] = useState(false);
-  const [searchString, setSearchString] = useState('');
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [showSearchInputField, updateShowSearchInputField] = useState(false);
+  const [searchString, updateSearchString] = useState('');
+  const [openDeleteModal, updateOpenDeleteModal] = useState(false);
   const params = useParams<{ streamId: string }>();
   const prevStreamId = usePrevious(params.streamId);
 
   useEffect(() => {
     if (params.streamId && !showSearchInputField) {
-      setSearchString(params.streamId);
-      setShowSearchInputField(true);
+      updateSearchString(params.streamId);
+      updateShowSearchInputField(true);
     }
     if ((prevStreamId && !params.streamId) && showSearchInputField) {
-      setSearchString('');
-      setShowSearchInputField(false);
+      updateSearchString('');
+      updateShowSearchInputField(false);
     }
   }, [params.streamId, showSearchInputField, prevStreamId])
-
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchString(e.target.value);
-  };
-
-  const onShowSearchClicked = () => {
-    setShowSearchInputField(true);
-  };
 
   const onSearchSubmit = (e: React.FormEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -80,8 +68,8 @@ export default function SearchBar(props: Props) {
   };
 
   const onCloseSearchClicked = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setSearchString('');
-    setShowSearchInputField(false);
+    updateSearchString('');
+    updateShowSearchInputField(false);
     history.push('/stream'); // TODO: we lost the link to the all streams from here
   };
 
@@ -94,14 +82,14 @@ export default function SearchBar(props: Props) {
               <IconButton
                 aria-label="search"
               >
-                <SearchIcon />
+                <Search />
               </IconButton>
               <InputBase
                 value={searchString}
                 className={classes.input}
                 placeholder="Search for stream id"
                 inputProps={{ 'aria-label': 'Search for stream id' }}
-                onChange={onSearchChange}
+                onChange={(e) => updateSearchString(e.target.value)}
               />
               <IconButton
                 onClick={onCloseSearchClicked}
@@ -109,7 +97,7 @@ export default function SearchBar(props: Props) {
                 aria-label="close search"
                 title="Close search"
               >
-                <ClearIcon />
+                <Clear />
               </IconButton>
             </Paper>
             {
@@ -119,7 +107,7 @@ export default function SearchBar(props: Props) {
                   size="small"
                   color="secondary"
                   variant="contained"
-                  onClick={() => setOpenDeleteModal(true)}
+                  onClick={() => updateOpenDeleteModal(true)}
                 >
                   Delete stream
                 </Button> : null
@@ -129,16 +117,15 @@ export default function SearchBar(props: Props) {
           <div className={classes.search}>
             <IconButton
               data-testid="open-search-button"
-              onClick={onShowSearchClicked}
+              onClick={() => updateShowSearchInputField(true)}
               aria-label="search"
             >
-              <SearchIcon />
+              <Search />
             </IconButton>
 
             <Divider orientation="vertical" flexItem />
 
             <IconButton
-              onClick={() => { }}
               disabled={!props.halLinks.first}
               aria-label="first page"
               data-testid="first-page-button"
@@ -146,10 +133,9 @@ export default function SearchBar(props: Props) {
               to={props.halLinks.first ? props.halLinks.first.uri.uri : '#'}
               title="First page"
             >
-              <FirstPageIcon />
+              <FirstPage />
             </IconButton>
             <IconButton
-              onClick={() => { }}
               disabled={!props.halLinks.previous}
               aria-label="previous page"
               data-testid="previous-page-button"
@@ -161,7 +147,6 @@ export default function SearchBar(props: Props) {
             </IconButton>
             <Typography>{`from position ${props.fromPosition}`}</Typography>
             <IconButton
-              onClick={() => { }}
               disabled={!props.halLinks.next}
               aria-label="next page"
               data-testid="next-page-button"
@@ -172,7 +157,6 @@ export default function SearchBar(props: Props) {
               <KeyboardArrowRight />
             </IconButton>
             <IconButton
-              onClick={() => { }}
               disabled={!props.halLinks.last}
               aria-label="last page"
               data-testid="last-page-button"
@@ -180,17 +164,15 @@ export default function SearchBar(props: Props) {
               to={props.halLinks.last ? props.halLinks.last.uri.uri : '#'}
               title="Last page"
             >
-              <LastPageIcon />
+              <LastPage />
             </IconButton>
           </div>
       }
-      <Modal
+      <ConfirmDeleteModal
         open={openDeleteModal}
-        onClose={() => setOpenDeleteModal(false)}
-        title="Are you absolutely sure?"
-      >
-        <div>This action cannot be undone. This will permanently delete this stream.</div>
-      </Modal>
+        onClose={() => updateOpenDeleteModal(false)}
+        onConfirm={() => {}}
+      />
     </div>
   );
 }

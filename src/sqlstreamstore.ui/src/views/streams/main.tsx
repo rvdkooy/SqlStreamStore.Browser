@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams, useRouteMatch, useLocation } from 'react-router-dom';
-import Searchbar from '../../components/Searchbar/searchbar';
+import Searchbar from './searchbar';
 import ProgressIndicator from '../../components/progressIndicator';
 import { makeStyles } from '@material-ui/core';
 import ErrorMessage from '../../components/errorMessage';
