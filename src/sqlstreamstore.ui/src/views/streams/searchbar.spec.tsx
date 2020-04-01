@@ -5,7 +5,7 @@ import { render, fireEvent, wait } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import SearchBar from './searchbar';
 
-describe('seachbar specs', () => {
+const çreateBasicHalState = () => {
   const halRestClient = new HalRestClient();
   const halState = new HalResource(halRestClient);
   halState.link('first', new HalResource(new HalRestClient(), new URI('/first')));
@@ -13,11 +13,16 @@ describe('seachbar specs', () => {
   halState.link('next', new HalResource(new HalRestClient(), new URI('/next')));
   halState.link('last', new HalResource(new HalRestClient(), new URI('/last')));
   halState.prop('fromPosition', '1');
+  return halState;
+}
+
+describe('seachbar specs', () => {
+  
 
   it('should by default show the command buttons', () => {
     const container = render(
       <MemoryRouter>
-        <SearchBar halState={halState} />
+        <SearchBar halState={çreateBasicHalState()} />
       </MemoryRouter>
     );
 
@@ -31,7 +36,7 @@ describe('seachbar specs', () => {
   it('should show the search input when search button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar halState={halState} />
+          <SearchBar halState={çreateBasicHalState()} />
         </MemoryRouter>
       );
 
@@ -48,7 +53,7 @@ describe('seachbar specs', () => {
   it('should close the search input when close button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar halState={halState} />
+          <SearchBar halState={çreateBasicHalState()} />
         </MemoryRouter>
       );
 
@@ -62,7 +67,7 @@ describe('seachbar specs', () => {
   it('should call onSearchStreamId when submitting the search string', () => {
     const memoryHistory = createMemoryHistory();
     
-    const customHalState = new HalResource(halRestClient);
+    const customHalState = new HalResource(çreateBasicHalState());
     customHalState.link('streamStore:find', new HalResource(new HalRestClient(), new URI('/find/{streamId}', true)));
     customHalState.prop('fromPosition', '1');
 
@@ -86,7 +91,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar halState={halState} />
+            <SearchBar halState={çreateBasicHalState()} />
           </Route>
         </Router>
       );
@@ -94,10 +99,12 @@ describe('seachbar specs', () => {
     expect(container.getByTestId('search-container')).toBeTruthy();
   });
 
-  it('should show delete stream button when the route contains a streamid', () => {
+  it('should show delete stream button when the stream can be deleted', () => {
     const history = createMemoryHistory()
     history.push('/streams/streamid');
-    
+    const halState = çreateBasicHalState();
+    halState.prop('streamStore:delete-stream', {});
+
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
@@ -114,7 +121,9 @@ describe('seachbar specs', () => {
     
   //   const history = createMemoryHistory()
   //   history.push('/streams/streamid');
-    
+  //   const halState = çreateBasicHalState();
+  //   halState.prop('streamStore:delete-stream', )
+
   //   const container = render(
   //       <Router history={history}>
   //         <Route path="/streams/:streamId?">
@@ -125,7 +134,7 @@ describe('seachbar specs', () => {
     
   //   fireEvent.click(container.getByTestId('delete-stream-button'));
   //   fireEvent.click(container.getByTestId('confirm-deletestream-button'));
-  //   expect(onDeleteSpy).toHaveBeenCalled();
+  //   expect(halState.).toHaveBeenCalled();
   // });
 
   it('should close the search input when the route removes a streamid', async () => {
@@ -135,7 +144,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar halState={halState} />
+            <SearchBar halState={çreateBasicHalState()} />
           </Route>
         </Router>
       );

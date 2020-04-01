@@ -100,7 +100,7 @@ export default function SearchBar(props: Props) {
               </IconButton>
             </Paper>
             {
-              (params.streamId) ? 
+              (halState.prop('streamStore:delete-stream')) ? 
                 <Button
                   data-testid="delete-stream-button"
                   size="small"
