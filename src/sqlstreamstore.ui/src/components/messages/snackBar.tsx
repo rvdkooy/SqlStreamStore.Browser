@@ -14,7 +14,6 @@ export interface SnackbarMessage {
   severity: Color;
 };
 
-
 const SnackBar = (props: SnackbarProps) => {
   return (
     <Snackbar
@@ -23,7 +22,7 @@ const SnackBar = (props: SnackbarProps) => {
       open={props.open}
       autoHideDuration={6000}
     >
-      <Alert severity={props.severity} onClose={props.onClose}>
+      <Alert elevation={6} variant="filled" severity={props.severity} onClose={props.onClose}>
         { props.message }
       </Alert>
       

@@ -138,7 +138,10 @@ describe('seachbar specs', () => {
     await wait(() => {
       expect(halState.delete).toHaveBeenCalled();
       expect(history.push).toHaveBeenCalledWith('/stream');
-      expect(snackBar.triggerMessage).toHaveBeenCalled();
+      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
+        message: 'Successfully deleted the stream',
+        severity: 'success',
+      });
     });
   });
 
@@ -165,8 +168,11 @@ describe('seachbar specs', () => {
     
     await wait(() => {
       expect(halState.delete).toHaveBeenCalled();
-      expect(history.push).not.toHaveBeenCalledWith('/stream');
-      expect(snackBar.triggerMessage).toHaveBeenCalled();
+      expect(history.push).toHaveBeenCalledWith('/stream');
+      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
+        message: 'Couldn\'t delete the stream',
+        severity: 'error',
+      });
     });
   });
 

@@ -7,7 +7,7 @@ import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import { FirstPage, LastPage, KeyboardArrowLeft,
-  KeyboardArrowRight, Search, Clear } from '@material-ui/icons';
+  KeyboardArrowRight, Search, Clear, Delete } from '@material-ui/icons';
 import { Typography } from '@material-ui/core';
 import usePrevious from '../../components/hooks/usePrevious';
 import { HalResource } from 'hal-rest-client';
@@ -83,6 +83,7 @@ export default function SearchBar(props: Props) {
       });
     } catch (err) {
       console.error(err);
+      history.push('/stream');
       triggerMessage({
         message: 'Couldn\'t delete the stream',
         severity: "error",
@@ -125,6 +126,7 @@ export default function SearchBar(props: Props) {
                   color="secondary"
                   variant="contained"
                   onClick={() => updateOpenDeleteModal(true)}
+                  startIcon={<Delete />}  
                 >
                   Delete stream
                 </Button> : null
