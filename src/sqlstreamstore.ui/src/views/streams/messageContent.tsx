@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import prettyPrintJson from 'pretty-print-json';
 import 'pretty-print-json/dist/pretty-print-json.css';
 import { HalResource } from 'hal-rest-client';
-import ErrorMessage from '../../components/errorMessage';
+import ErrorMessage from '../../components/messages/errorMessage';
 
 const useStyles = makeStyles((theme) => ({
   jsonData: {

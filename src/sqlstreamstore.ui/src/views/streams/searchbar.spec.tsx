@@ -116,26 +116,30 @@ describe('seachbar specs', () => {
     expect(container.getByTestId('delete-stream-button')).toBeTruthy();
   });
 
-  // it('should delete when delete stream is confirmed', () => {
-  //   const onDeleteSpy = jest.fn();
-    
-  //   const history = createMemoryHistory()
-  //   history.push('/streams/streamid');
-  //   const halState = çreateBasicHalState();
-  //   halState.prop('streamStore:delete-stream', )
+  it('should delete when delete stream is confirmed', async () => {
+    const history = createMemoryHistory()
+    const halState = çreateBasicHalState();
+    jest.spyOn(halState, 'delete').mockResolvedValue(null);
+    jest.spyOn(history, 'push');
+    history.push('/streams/streamid');
+    halState.prop('streamStore:delete-stream', {});
 
-  //   const container = render(
-  //       <Router history={history}>
-  //         <Route path="/streams/:streamId?">
-  //           <SearchBar halState={halState} />
-  //         </Route>
-  //       </Router>
-  //     );
+    const container = render(
+        <Router history={history}>
+          <Route path="/streams/:streamId?">
+            <SearchBar halState={halState} />
+          </Route>
+        </Router>
+      );
     
-  //   fireEvent.click(container.getByTestId('delete-stream-button'));
-  //   fireEvent.click(container.getByTestId('confirm-deletestream-button'));
-  //   expect(halState.).toHaveBeenCalled();
-  // });
+    fireEvent.click(container.getByTestId('delete-stream-button'));
+    fireEvent.click(container.getByTestId('confirm-deletestream-button'));
+    
+    await wait(() => {
+      expect(halState.delete).toHaveBeenCalled();
+      expect(history.push).toHaveBeenCalledWith('/stream');
+    });
+  });
 
   it('should close the search input when the route removes a streamid', async () => {
     const history = createMemoryHistory()

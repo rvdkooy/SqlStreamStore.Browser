@@ -72,6 +72,11 @@ export default function SearchBar(props: Props) {
     history.push('/stream'); // TODO: we lost the link to the all streams from here
   };
 
+  const onConfirmDelete = async () => {
+    await halState.delete();
+    history.push('/stream');
+  };
+
   return (
     <div>
       {
@@ -170,7 +175,7 @@ export default function SearchBar(props: Props) {
       <ConfirmDeleteModal
         open={openDeleteModal}
         onClose={() => updateOpenDeleteModal(false)}
-        onConfirm={() => {}}
+        onConfirm={onConfirmDelete}
       />
     </div>
   );

@@ -3,7 +3,7 @@ import { useRouteMatch } from 'react-router-dom';
 import usePrevious from '../../components/hooks/usePrevious';
 import { makeStyles } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
-import ErrorMessage from '../../components/errorMessage';
+import ErrorMessage from '../../components/messages/errorMessage';
 import ProgressIndicator from '../../components/progressIndicator';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';

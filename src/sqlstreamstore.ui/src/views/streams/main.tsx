@@ -3,7 +3,7 @@ import { useHistory, useParams, useRouteMatch, useLocation } from 'react-router-
 import Searchbar from './searchbar';
 import ProgressIndicator from '../../components/progressIndicator';
 import { makeStyles } from '@material-ui/core';
-import ErrorMessage from '../../components/errorMessage';
+import ErrorMessage from '../../components/messages/errorMessage';
 import StreamsTable from './table';
 import MessageDrawer from './drawer';
 import { getHalClient } from '../../services/hal';

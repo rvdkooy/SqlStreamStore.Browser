@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core';
 import BookIcon from '@material-ui/icons/Book';
 import GithubIcon from '@material-ui/icons/GitHub';
 import Card from './card';
-import ErrorMessage from '../../components/errorMessage';
+import ErrorMessage from '../../components/messages/errorMessage';
 import ProgressIndicator from '../../components/progressIndicator';
 import { Link } from 'react-router-dom';
 import { getHalClient } from '../../services/hal';
