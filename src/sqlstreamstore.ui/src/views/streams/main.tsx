@@ -3,12 +3,12 @@ import { useHistory, useParams, useRouteMatch, useLocation } from 'react-router-
 import Searchbar from './searchbar';
 import ProgressIndicator from '../../components/progressIndicator';
 import { makeStyles } from '@material-ui/core';
-import ErrorMessage from '../../components/messages/errorMessage';
+import ErrorMessage from '../../components/messages/message';
 import StreamsTable from './table';
 import MessageDrawer from './drawer';
-import { getHalClient } from '../../services/hal';
 import { HalResource } from 'hal-rest-client';
 import usePrevious from '../../components/hooks/usePrevious'
+import useHalClient from '../../components/hooks/useHalClient'
 
 const useStyles = makeStyles({
   root: {
@@ -27,12 +27,13 @@ const StreamsView = () => {
   const [messages, updateMessages] = useState<HalResource[]>([]);
   const [status, updateStatus] = useState('loading');
   const previousStreamId = usePrevious(params.streamId);
-  const halClient = getHalClient();
+  const halClient = useHalClient();
   const routeMatch = useRouteMatch();
   const queryStrings = useLocation().search;
   
   useEffect(() => {
     async function retrieveStreams() {
+      
       try {
         if (!params.streamId || params.streamId !== previousStreamId) {
           updateStatus('loading');
@@ -55,7 +56,7 @@ const StreamsView = () => {
     }
 
     retrieveStreams();
-  }, [params, routeMatch, halClient, queryStrings, previousStreamId]);
+  }, [params.streamId, routeMatch.url, halClient, queryStrings, previousStreamId]);
 
   const onDrawerCloseButtonClicked = () => {
     if (halState) {
@@ -65,12 +66,11 @@ const StreamsView = () => {
 
   return (
     <div className={classes.root}>
-
       {
         (status === 'loading') ? <ProgressIndicator /> : null
       }
       {
-        (status === 'error') ? <ErrorMessage message="An error occured while retrieving streams" /> : null
+        (status === 'error') ? <ErrorMessage severity="error" message="An error occured while retrieving streams" /> : null
       }
       {
         (status === 'done' && halState) ?

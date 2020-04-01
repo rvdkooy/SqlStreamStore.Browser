@@ -12,6 +12,7 @@ import { Typography } from '@material-ui/core';
 import usePrevious from '../../components/hooks/usePrevious';
 import { HalResource } from 'hal-rest-client';
 import ConfirmDeleteModal from './confirmDelete';
+import { triggerMessage } from '../../components/messages/snackBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -73,8 +74,20 @@ export default function SearchBar(props: Props) {
   };
 
   const onConfirmDelete = async () => {
-    await halState.delete();
-    history.push('/stream');
+    try {
+      await halState.delete();
+      history.push('/stream');
+      triggerMessage({
+        message: 'Successfully deleted the stream',
+        severity: "success",
+      });
+    } catch (err) {
+      console.error(err);
+      triggerMessage({
+        message: 'Couldn\'t delete the stream',
+        severity: "error",
+      });
+    }
   };
 
   return (

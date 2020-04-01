@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core';
 import BookIcon from '@material-ui/icons/Book';
 import GithubIcon from '@material-ui/icons/GitHub';
 import Card from './card';
-import ErrorMessage from '../../components/messages/errorMessage';
+import ErrorMessage from '../../components/messages/message';
 import ProgressIndicator from '../../components/progressIndicator';
 import { Link } from 'react-router-dom';
 import { getHalClient } from '../../services/hal';
@@ -90,7 +90,7 @@ const Dashboard = () => {
         (status === 'loading') ? <ProgressIndicator /> : null
       }
       {
-        (status === 'error') ? <ErrorMessage message="An error occured while retrieving the dashboard information!" /> : null
+        (status === 'error') ? <ErrorMessage severity="error" message="An error occured while retrieving the dashboard information!" /> : null
       }
       {
         status === 'done' && halIndex ?

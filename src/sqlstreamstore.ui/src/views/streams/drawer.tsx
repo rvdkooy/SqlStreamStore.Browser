@@ -3,7 +3,7 @@ import { useRouteMatch } from 'react-router-dom';
 import usePrevious from '../../components/hooks/usePrevious';
 import { makeStyles } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
-import ErrorMessage from '../../components/messages/errorMessage';
+import ErrorMessage from '../../components/messages/message';
 import ProgressIndicator from '../../components/progressIndicator';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
@@ -76,7 +76,7 @@ const MessageDrawer = (props: Props) => {
           (status === 'loading') ? <ProgressIndicator /> : null
         }
         {
-          (status === 'error') ? <ErrorMessage message="An error occured while retrieving the message" /> : null
+          (status === 'error') ? <ErrorMessage severity="error" message="An error occured while retrieving the message" /> : null
         }
       </div>
     </Drawer>
