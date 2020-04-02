@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Switch, Route } from "react-router-dom";
 import DashBoard from './views/dashboard/dashboard';
 import StreamsView from './views/streams/main';
@@ -7,6 +7,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core';
 import Header from './components/header/header';
 import { createHalClient } from './services/hal';
+import SnackBar, { listenOnMessages, listenOffMessages, SnackbarMessage } from './components/messages/snackBar';
 import 'typeface-roboto';
 
 const useStyles = makeStyles({
@@ -26,6 +27,23 @@ createHalClient(basename);
 
 function App() {
   const classes = useStyles();
+  const [snackbarState, updateSnackbarState] = useState<SnackbarMessage>();
+
+  useEffect(() => {
+    const snackBarListener = (message: SnackbarMessage) => {
+      updateSnackbarState(message);
+    };
+    
+    listenOnMessages(snackBarListener);
+    return () => {
+      listenOffMessages(snackBarListener);
+    };
+  }, []);
+
+  const closeSnackbar = () => {
+    updateSnackbarState(undefined);
+  };
+
   return (
     <BrowserRouter basename={basename || undefined}>
       <div className={classes.root}>
@@ -41,6 +59,12 @@ function App() {
             </Route>
           </Switch>
         </main>
+        <SnackBar
+          onClose={closeSnackbar}
+          message={snackbarState?.message || ''}
+          severity={snackbarState?.severity || 'info'}
+          open={!!snackbarState}
+        />
       </div>
     </BrowserRouter>
   );

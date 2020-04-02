@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams, useRouteMatch, useLocation } from 'react-router-dom';
-import Searchbar from '../../components/Searchbar/searchbar';
+import Searchbar from './searchbar';
 import ProgressIndicator from '../../components/progressIndicator';
 import { makeStyles } from '@material-ui/core';
-import ErrorMessage from '../../components/errorMessage';
+import ErrorMessage from '../../components/messages/message';
 import StreamsTable from './table';
 import MessageDrawer from './drawer';
-import { getHalClient } from '../../services/hal';
 import { HalResource } from 'hal-rest-client';
 import usePrevious from '../../components/hooks/usePrevious'
+import useHalClient from '../../components/hooks/useHalClient'
 
 const useStyles = makeStyles({
   root: {
@@ -23,16 +23,17 @@ const StreamsView = () => {
   const classes = useStyles();
   const history = useHistory();
   const params = useParams<{ streamId: string, version: string }>();
-  const [halResponse, updateHalResponse] = useState<HalResource>();
+  const [halState, updateHalState] = useState<HalResource>();
   const [messages, updateMessages] = useState<HalResource[]>([]);
   const [status, updateStatus] = useState('loading');
   const previousStreamId = usePrevious(params.streamId);
-  const halClient = getHalClient();
+  const halClient = useHalClient();
   const routeMatch = useRouteMatch();
   const queryStrings = useLocation().search;
   
   useEffect(() => {
     async function retrieveStreams() {
+      
       try {
         if (!params.streamId || params.streamId !== previousStreamId) {
           updateStatus('loading');
@@ -44,7 +45,8 @@ const StreamsView = () => {
           } else {
             updateMessages(streamStoreMessage);
           }
-          updateHalResponse(fetchHalResponse);
+
+          updateHalState(fetchHalResponse);
           updateStatus('done');
         }
       } catch (err) {
@@ -54,30 +56,28 @@ const StreamsView = () => {
     }
 
     retrieveStreams();
-  }, [params, routeMatch, halClient, queryStrings, previousStreamId]);
+  }, [params.streamId, routeMatch.url, halClient, queryStrings, previousStreamId]);
 
   const onDrawerCloseButtonClicked = () => {
-    if (halResponse) {
-      history.push('../' + halResponse.link('streamStore:feed').uri.uri);
+    if (halState) {
+      history.push('../' + halState.link('streamStore:feed').uri.uri);
     }
   };
 
   return (
     <div className={classes.root}>
-
       {
         (status === 'loading') ? <ProgressIndicator /> : null
       }
       {
-        (status === 'error') ? <ErrorMessage message="An error occured while retrieving streams" /> : null
+        (status === 'error') ? <ErrorMessage severity="error" message="An error occured while retrieving streams" /> : null
       }
       {
-        (status === 'done' && halResponse) ?
+        (status === 'done' && halState) ?
           <div>
             <div className={classes.searchContainer}>
               <Searchbar
-                halLinks={halResponse.links}
-                fromPosition={halResponse.prop('fromPosition')}
+                halState={halState}
               />
             </div>
             <StreamsTable streams={messages} />
