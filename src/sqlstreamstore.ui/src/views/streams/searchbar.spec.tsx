@@ -133,7 +133,7 @@ describe('seachbar specs', () => {
       );
     
     fireEvent.click(container.getByTestId('delete-stream-button'));
-    fireEvent.click(container.getByTestId('confirm-deletestream-button'));
+    fireEvent.click(container.getByTestId('confirm-button'));
     
     await wait(() => {
       expect(halState.delete).toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe('seachbar specs', () => {
       );
     
     fireEvent.click(container.getByTestId('delete-stream-button'));
-    fireEvent.click(container.getByTestId('confirm-deletestream-button'));
+    fireEvent.click(container.getByTestId('confirm-button'));
     
     await wait(() => {
       expect(halState.delete).toHaveBeenCalled();

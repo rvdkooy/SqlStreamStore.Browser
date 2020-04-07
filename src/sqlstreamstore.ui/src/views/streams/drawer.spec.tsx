@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, wait } from '@testing-library/react';
 import Drawer from './drawer';
 import { act } from 'react-dom/test-utils';
 import { createMemoryHistory } from 'history';
@@ -7,6 +7,7 @@ import * as hal from '../../services/hal';
 import flushPromises from '../../testUtils/flushPromises';
 import { MemoryRouter, Router, Route } from 'react-router-dom';
 import { HalRestClient, HalResource } from 'hal-rest-client';
+import * as snackBar from '../../components/messages/snackBar';
 
 describe('message drawer specs', () => {
   const halRestClient = new HalRestClient();
@@ -140,6 +141,98 @@ describe('message drawer specs', () => {
       await flushPromises();
 
       expect(container.getByText('Unable to parse json data')).toBeTruthy();
+    });
+  });
+
+  it('should show delete message button when the message can be deleted', async () => {
+    const history = createMemoryHistory()
+    history.push('/streams/1/version1');
+    const halState = createMessageHalResult();
+    halState.prop('streamStore:delete-message', {});
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halState);
+
+    await act(async () => {
+      const container = render(
+        <Router history={history}>
+          <Route path="/streams/1/version1">
+            <Drawer onCloseButtonClicked={() => { }} version={'version1'} />
+          </Route>
+        </Router>
+      );
+
+      await flushPromises();
+
+      expect(container.getByTestId('delete-message-button')).toBeTruthy();
+    });
+  });
+
+  it('should show when a message is successfully deleted', async () => {
+    const history = createMemoryHistory()
+    history.push('/streams/1/version1');
+    const halState = createMessageHalResult();
+    halState.prop('streamStore:delete-message', {});
+    jest.spyOn(halState, 'delete').mockResolvedValue(null);
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halState);
+    const closeButtonClicked = jest.fn();
+    jest.spyOn(snackBar, 'triggerMessage');
+
+    await act(async () => {
+      const container = render(
+        <Router history={history}>
+          <Route path="/streams/1/version1">
+            <Drawer onCloseButtonClicked={closeButtonClicked} version={'version1'} />
+          </Route>
+        </Router>
+      );
+
+      await flushPromises();
+
+      fireEvent.click(container.getByTestId('delete-message-button'));
+      fireEvent.click(container.getByTestId('confirm-button'));
+
+      await wait(() => {
+        expect(halState.delete).toHaveBeenCalled();
+        expect(closeButtonClicked).toHaveBeenCalled();
+        expect(snackBar.triggerMessage).toHaveBeenCalledWith({
+          message: 'Successfully deleted the message',
+          severity: 'success',
+        });
+      });
+    });
+  });
+
+  it('should show when a message is NOT successfully deleted', async () => {
+    const history = createMemoryHistory()
+    history.push('/streams/1/version1');
+    const halState = createMessageHalResult();
+    halState.prop('streamStore:delete-message', {});
+    jest.spyOn(halState, 'delete').mockRejectedValue(null);
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halState);
+    const closeButtonClicked = jest.fn();
+    jest.spyOn(snackBar, 'triggerMessage');
+
+    await act(async () => {
+      const container = render(
+        <Router history={history}>
+          <Route path="/streams/1/version1">
+            <Drawer onCloseButtonClicked={closeButtonClicked} version={'version1'} />
+          </Route>
+        </Router>
+      );
+
+      await flushPromises();
+
+      fireEvent.click(container.getByTestId('delete-message-button'));
+      fireEvent.click(container.getByTestId('confirm-button'));
+
+      await wait(() => {
+        expect(halState.delete).toHaveBeenCalled();
+        expect(closeButtonClicked).not.toHaveBeenCalled();
+        expect(snackBar.triggerMessage).toHaveBeenCalledWith({
+          message: 'Couldn\'t delete the message',
+          severity: 'error',
+        });
+      });
     });
   });
 });

@@ -81,12 +81,12 @@ const StreamsView = () => {
               />
             </div>
             <StreamsTable streams={messages} />
+            <MessageDrawer
+              onCloseButtonClicked={onDrawerCloseButtonClicked}
+              version={params.version}
+            />
           </div> : null
       }
-      <MessageDrawer
-        onCloseButtonClicked={onDrawerCloseButtonClicked}
-        version={params.version}
-      />
     </div>
   );
 };
