@@ -123,7 +123,9 @@ const MessageDrawer = (props: Props) => {
           open={openDeleteModal}
           onClose={() => updateOpenDeleteModal(false)}
           onConfirm={onConfirmDelete}
-        />
+        >
+          <span>This action cannot be undone. This will permanently delete the message.</span>
+        </ConfirmDeleteModal>
       </div>
     </Drawer>
   );

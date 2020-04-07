@@ -191,7 +191,9 @@ export default function SearchBar(props: Props) {
         open={openDeleteModal}
         onClose={() => updateOpenDeleteModal(false)}
         onConfirm={onConfirmDelete}
-      />
+      >
+        <span>This action cannot be undone. This will permanently delete the stream.</span>
+      </ConfirmDeleteModal>
     </div>
   );
 }
