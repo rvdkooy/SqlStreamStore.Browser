@@ -37,16 +37,16 @@ const StreamsView = () => {
       try {
         if (!params.streamId || params.streamId !== previousStreamId) {
           updateStatus('loading');
-          const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}${queryStrings}`);
-          const streamStoreMessage = fetchHalResponse.prop('streamStore:message');
+          let halResponse = await halClient.fetchResource(`.${routeMatch.url}${queryStrings}`);
+          const streamStoreMessage = halResponse.prop('streamStore:message');
           if (streamStoreMessage instanceof HalResource) {
-            const streamsHalResource = await halClient.fetchResource(streamStoreMessage.link('streamStore:feed').uri.uri);
-            updateMessages(streamsHalResource.prop('streamStore:message'));
+            halResponse = await halClient.fetchResource(streamStoreMessage.link('streamStore:feed').uri.uri);
+            updateMessages(halResponse.prop('streamStore:message'));
           } else {
             updateMessages(streamStoreMessage);
           }
 
-          updateHalState(fetchHalResponse);
+          updateHalState(halResponse);
           updateStatus('done');
         }
       } catch (err) {
