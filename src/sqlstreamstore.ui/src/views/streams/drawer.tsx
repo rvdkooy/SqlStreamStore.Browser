@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-  onCloseButtonClicked: () => void;
+  onClose: (refresh?: boolean) => void;
   version?: string;
 }
 
@@ -70,7 +70,7 @@ const MessageDrawer = (props: Props) => {
           message: 'Successfully deleted the message',
           severity: "success",
         });
-        props.onCloseButtonClicked();
+        props.onClose(true);
       }
     } catch (err) {
       console.error(err);
@@ -87,7 +87,7 @@ const MessageDrawer = (props: Props) => {
   return (
     <Drawer anchor="right" open={!!props.version} >
       <div className={classes.drawerHeader}>
-        <IconButton onClick={props.onCloseButtonClicked}>
+        <IconButton onClick={() => props.onClose()}>
           <CloseIcon />
         </IconButton>
 

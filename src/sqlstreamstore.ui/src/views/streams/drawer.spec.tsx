@@ -25,11 +25,11 @@ describe('message drawer specs', () => {
     jest.spyOn(hal, 'getHalClient').mockReturnValue(halRestClient);
   });
 
-  const renderDrawerWithVersion = (history: History, closeButtonCb?: () => void) => {
+  const renderDrawerWithVersion = (history: History, onCloseCb?: () => void) => {
     return render(
       <Router history={history}>
         <Route path={`/streams/1/v1`}>
-          <Drawer onCloseButtonClicked={closeButtonCb || jest.fn()} version="v1" />
+          <Drawer onClose={onCloseCb || jest.fn()} version="v1" />
         </Route>
       </Router>
     );
@@ -38,7 +38,7 @@ describe('message drawer specs', () => {
   it('should close the drawer when no messageId is provided', () => {
     const container = render(
       <MemoryRouter>
-        <Drawer onCloseButtonClicked={jest.fn()} version={undefined} />
+        <Drawer onClose={jest.fn()} version={undefined} />
       </MemoryRouter>
     );
 
@@ -91,7 +91,7 @@ describe('message drawer specs', () => {
     });
   });
 
-  it('calls the onCloseButtonClicked when close button is clicked', async () => {
+  it('calls the onClose when close button is clicked', async () => {
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(createMessageHalResult());
     const buttonClickSpy = jest.fn();
     const history = createMemoryHistory();
@@ -145,11 +145,11 @@ describe('message drawer specs', () => {
     halState.prop('streamStore:delete-message', {});
     jest.spyOn(halState, 'delete').mockResolvedValue(null);
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halState);
-    const closeButtonClicked = jest.fn();
+    const closeCallback = jest.fn();
     jest.spyOn(snackBar, 'triggerMessage');
 
     await act(async () => {
-      const container = renderDrawerWithVersion(history, closeButtonClicked);
+      const container = renderDrawerWithVersion(history, closeCallback);
       await flushPromises();
 
       fireEvent.click(container.getByTestId('delete-message-button'));
@@ -157,7 +157,7 @@ describe('message drawer specs', () => {
 
       await wait(() => {
         expect(halState.delete).toHaveBeenCalled();
-        expect(closeButtonClicked).toHaveBeenCalled();
+        expect(closeCallback).toHaveBeenCalledWith(true);
         expect(snackBar.triggerMessage).toHaveBeenCalledWith({
           message: 'Successfully deleted the message',
           severity: 'success',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { useHistory, useParams, useRouteMatch, useLocation } from 'react-router-dom';
 import CommandBar from './commandBar';
 import ProgressIndicator from '../../components/progressIndicator';
@@ -31,36 +31,38 @@ const StreamsView = () => {
   const routeMatch = useRouteMatch();
   const queryStrings = useLocation().search;
   
-  useEffect(() => {
-    async function retrieveStreams() {
-      
-      try {
-        if (!params.streamId || params.streamId !== previousStreamId) {
-          updateStatus('loading');
-          let halResponse = await halClient.fetchResource(`.${routeMatch.url}${queryStrings}`);
-          const streamStoreMessage = halResponse.prop('streamStore:message');
-          if (streamStoreMessage instanceof HalResource) {
-            halResponse = await halClient.fetchResource(streamStoreMessage.link('streamStore:feed').uri.uri);
-            updateMessages(halResponse.prop('streamStore:message'));
-          } else {
-            updateMessages(streamStoreMessage);
-          }
-
-          updateHalState(halResponse);
-          updateStatus('done');
-        }
-      } catch (err) {
-        console.error(err);
-        updateStatus('error');
+  const retrieveStreams = useCallback(async () => {
+    try {
+      updateStatus('loading');
+      let halResponse = await halClient.fetchResource(`.${routeMatch.url}${queryStrings}`);
+      const streamStoreMessage = halResponse.prop('streamStore:message');
+      if (streamStoreMessage instanceof HalResource) {
+        halResponse = await halClient.fetchResource(streamStoreMessage.link('streamStore:feed').uri.uri);
+        updateMessages(halResponse.prop('streamStore:message'));
+      } else {
+        updateMessages(streamStoreMessage);
       }
+
+      updateHalState(halResponse);
+      updateStatus('done');
+    } catch (err) {
+      console.error(err);
+      updateStatus('error');
     }
+  }, [routeMatch.url, halClient, queryStrings]);
 
-    retrieveStreams();
-  }, [params.streamId, routeMatch.url, halClient, queryStrings, previousStreamId]);
+  useEffect(() => {
+    if (!params.streamId || params.streamId !== previousStreamId) {
+      retrieveStreams();
+    }
+  }, [params.streamId, previousStreamId, retrieveStreams]);
 
-  const onDrawerCloseButtonClicked = () => {
+  const onDrawerClose = (refresh?: boolean) => {
     if (halState) {
       history.push('../' + halState.link('streamStore:feed').uri.uri);
+    }
+    if (refresh) {
+      retrieveStreams();
     }
   };
 
@@ -76,13 +78,11 @@ const StreamsView = () => {
         (status === 'done' && halState) ?
           <div>
             <div className={classes.searchContainer}>
-              <CommandBar
-                halState={halState}
-              />
+              <CommandBar halState={halState} />
             </div>
             <StreamsTable streams={messages} />
             <MessageDrawer
-              onCloseButtonClicked={onDrawerCloseButtonClicked}
+              onClose={onDrawerClose}
               version={params.version}
             />
           </div> : null
