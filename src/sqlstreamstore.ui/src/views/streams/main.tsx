@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams, useRouteMatch, useLocation } from 'react-router-dom';
-import Searchbar from './searchbar';
+import CommandBar from './commandBar';
 import ProgressIndicator from '../../components/progressIndicator';
 import { makeStyles } from '@material-ui/core';
 import ErrorMessage from '../../components/messages/message';
@@ -76,7 +76,7 @@ const StreamsView = () => {
         (status === 'done' && halState) ?
           <div>
             <div className={classes.searchContainer}>
-              <Searchbar
+              <CommandBar
                 halState={halState}
               />
             </div>

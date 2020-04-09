@@ -37,7 +37,7 @@ interface Props {
 const MessageDrawer = (props: Props) => {
   const classes = useStyles();
   const [status, updateStatus] = useState('loading');
-  const [halResource, setHalResource] = useState<HalResource | null>();
+  const [halResource, updateHalResource] = useState<HalResource | null>();
   const [openDeleteModal, updateOpenDeleteModal] = useState(false);
   const previousVersion = usePrevious(props.version);
   const halClient = getHalClient();
@@ -45,13 +45,13 @@ const MessageDrawer = (props: Props) => {
 
   useEffect(() => {
     if (!props.version && previousVersion) {
-      setHalResource(null);
+      updateHalResource(null);
     } else if (previousVersion !== props.version) {
       const retrieveMessage = async () => {
         try {
           updateStatus('loading');
           const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}`);
-          setHalResource(fetchHalResponse);
+          updateHalResource(fetchHalResponse);
           updateStatus('done');
         } catch (err) {
           console.error(err);

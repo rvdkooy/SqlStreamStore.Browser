@@ -41,7 +41,7 @@ interface Props {
   halState: HalResource;
 }
 
-export default function SearchBar(props: Props) {
+export default function CommandBar(props: Props) {
   const { halState } = props;
   const classes = useStyles();
   const history = useHistory();

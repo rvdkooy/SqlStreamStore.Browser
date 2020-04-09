@@ -3,7 +3,7 @@ import { HalResource, URI, HalRestClient } from 'hal-rest-client';
 import { MemoryRouter, Router, Route } from 'react-router-dom';
 import { render, fireEvent, wait } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import SearchBar from './searchbar';
+import CommandBar from './commandBar';
 import * as snackBar from '../../components/messages/snackBar';
 
 const çreateBasicHalState = () => {
@@ -21,7 +21,7 @@ describe('seachbar specs', () => {
   it('should by default show the command buttons', () => {
     const container = render(
       <MemoryRouter>
-        <SearchBar halState={çreateBasicHalState()} />
+        <CommandBar halState={çreateBasicHalState()} />
       </MemoryRouter>
     );
 
@@ -35,7 +35,7 @@ describe('seachbar specs', () => {
   it('should show the search input when search button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar halState={çreateBasicHalState()} />
+          <CommandBar halState={çreateBasicHalState()} />
         </MemoryRouter>
       );
 
@@ -52,7 +52,7 @@ describe('seachbar specs', () => {
   it('should close the search input when close button is clicked', () => {
     const container = render(
         <MemoryRouter>
-          <SearchBar halState={çreateBasicHalState()} />
+          <CommandBar halState={çreateBasicHalState()} />
         </MemoryRouter>
       );
 
@@ -73,7 +73,7 @@ describe('seachbar specs', () => {
     jest.spyOn(memoryHistory, 'push');
     const container = render(
         <Router history={memoryHistory}>
-          <SearchBar halState={customHalState} />
+          <CommandBar halState={customHalState} />
         </Router>
       );
 
@@ -90,7 +90,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar halState={çreateBasicHalState()} />
+            <CommandBar halState={çreateBasicHalState()} />
           </Route>
         </Router>
       );
@@ -107,7 +107,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar halState={halState} />
+            <CommandBar halState={halState} />
           </Route>
         </Router>
       );
@@ -127,7 +127,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar halState={halState} />
+            <CommandBar halState={halState} />
           </Route>
         </Router>
       );
@@ -158,7 +158,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar halState={halState} />
+            <CommandBar halState={halState} />
           </Route>
         </Router>
       );
@@ -183,7 +183,7 @@ describe('seachbar specs', () => {
     const container = render(
         <Router history={history}>
           <Route path="/streams/:streamId?">
-            <SearchBar halState={çreateBasicHalState()} />
+            <CommandBar halState={çreateBasicHalState()} />
           </Route>
         </Router>
       );
