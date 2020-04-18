@@ -18,9 +18,9 @@ const SnackBar = (props: SnackbarProps) => {
   return (
     <Snackbar
       onClose={props.onClose}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       open={props.open}
-      autoHideDuration={6000}
+      autoHideDuration={5000}
     >
       <Alert elevation={6} variant="filled" severity={props.severity} onClose={props.onClose}>
         { props.message }
