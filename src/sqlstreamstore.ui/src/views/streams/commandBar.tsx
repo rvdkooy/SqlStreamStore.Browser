@@ -91,6 +91,8 @@ export default function CommandBar(props: Props) {
     }
   };
 
+  const positionPrefix = (halState.uri.uri.indexOf('d=f') !== -1) ? 'Forwards' : 'Backwards';
+
   return (
     <div>
       {
@@ -164,7 +166,9 @@ export default function CommandBar(props: Props) {
             >
               <KeyboardArrowLeft />
             </IconButton>
-            <Typography>{`from position ${props.halState.prop('fromPosition')}`}</Typography>
+
+            <Typography>{`${positionPrefix} from position ${props.halState.prop('fromPosition')}`}</Typography>
+            
             <IconButton
               disabled={!halState.link('next')}
               aria-label="next page"

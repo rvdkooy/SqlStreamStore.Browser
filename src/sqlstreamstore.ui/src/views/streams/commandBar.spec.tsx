@@ -8,7 +8,7 @@ import * as snackBar from '../../components/messages/snackBar';
 
 const çreateBasicHalState = () => {
   const halRestClient = new HalRestClient();
-  const halState = new HalResource(halRestClient);
+  const halState = new HalResource(halRestClient, new URI('/'));
   halState.link('first', new HalResource(new HalRestClient(), new URI('/first')));
   halState.link('previous', new HalResource(new HalRestClient(), new URI('/previous')));
   halState.link('next', new HalResource(new HalRestClient(), new URI('/next')));
