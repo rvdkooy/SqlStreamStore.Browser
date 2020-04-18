@@ -126,7 +126,6 @@ export default function CommandBar(props: Props) {
                   data-testid="delete-stream-button"
                   size="small"
                   color="secondary"
-                  variant="contained"
                   onClick={() => updateOpenDeleteModal(true)}
                   startIcon={<Delete />}  
                 >

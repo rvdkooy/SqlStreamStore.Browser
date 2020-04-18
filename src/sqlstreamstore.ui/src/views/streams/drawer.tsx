@@ -97,7 +97,6 @@ const MessageDrawer = (props: Props) => {
               data-testid="delete-message-button"
               size="small"
               color="secondary"
-              variant="contained"
               onClick={() => updateOpenDeleteModal(true)}
               startIcon={<DeleteButton />}  
             >
