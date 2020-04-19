@@ -90,7 +90,6 @@ const MessageDrawer = (props: Props) => {
         <IconButton onClick={() => props.onClose()}>
           <CloseIcon />
         </IconButton>
-
         {
           (halResource && halResource.prop('streamStore:delete-message')) ? 
             <Button

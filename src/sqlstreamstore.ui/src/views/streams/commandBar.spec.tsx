@@ -164,4 +164,15 @@ describe('seachbar specs', () => {
       expect(container.queryAllByTestId('search-container').length).toBeFalsy();
     });
   });
+
+  it('should show append to stream button when can be appended to stream', () => {
+    const history = createMemoryHistory()
+    history.push('/streams/streamid');
+    const halState = çreateBasicHalState();
+    halState.prop('streamStore:append', {});
+
+    const container = renderCommandBar(halState, history);
+
+    expect(container.getByTestId('append-stream-button')).toBeTruthy();
+  });
 });

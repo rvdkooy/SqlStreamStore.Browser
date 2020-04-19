@@ -3,11 +3,12 @@ import { useParams, useHistory, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import { FirstPage, LastPage, KeyboardArrowLeft,
-  KeyboardArrowRight, Search, Clear, Delete } from '@material-ui/icons';
+  KeyboardArrowRight, Search, Clear, Delete, Add } from '@material-ui/icons';
 import { Typography } from '@material-ui/core';
 import usePrevious from '../../components/hooks/usePrevious';
 import { HalResource } from 'hal-rest-client';
@@ -120,18 +121,32 @@ export default function CommandBar(props: Props) {
                 <Clear />
               </IconButton>
             </Paper>
-            {
-              (halState.prop('streamStore:delete-stream')) ? 
-                <Button
-                  data-testid="delete-stream-button"
-                  size="small"
-                  color="secondary"
-                  onClick={() => updateOpenDeleteModal(true)}
-                  startIcon={<Delete />}  
-                >
-                  Delete stream
-                </Button> : null
-            }
+            <div>
+              <ButtonGroup size="small" color="primary">
+                {
+                  (halState.prop('streamStore:delete-stream')) ? 
+                    <Button
+                      data-testid="delete-stream-button"
+                      color="secondary"
+                      onClick={() => updateOpenDeleteModal(true)}
+                      startIcon={<Delete />}  
+                    >
+                      Delete stream
+                    </Button> : null
+                }
+                {
+                  (halState && halState.prop('streamStore:append')) ? 
+                    <Button
+                      data-testid="append-stream-button"
+                      onClick={() => {}}
+                      startIcon={<Add />}  
+                    >
+                      Append message
+                    </Button> : null
+                }
+              </ButtonGroup>
+
+            </div>
           </div>
           :
           <div className={classes.search}>
