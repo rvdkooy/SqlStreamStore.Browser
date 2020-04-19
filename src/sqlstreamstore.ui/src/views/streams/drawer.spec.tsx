@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, wait } from '@testing-library/react';
 import Drawer from './drawer';
 import { act } from 'react-dom/test-utils';
-import { createMemoryHistory } from 'history';
+import { createMemoryHistory, History } from 'history';
 import * as hal from '../../services/hal';
 import flushPromises from '../../testUtils/flushPromises';
 import { MemoryRouter, Router, Route } from 'react-router-dom';
@@ -25,10 +25,20 @@ describe('message drawer specs', () => {
     jest.spyOn(hal, 'getHalClient').mockReturnValue(halRestClient);
   });
 
+  const renderDrawerWithVersion = (history: History, onCloseCb?: () => void) => {
+    return render(
+      <Router history={history}>
+        <Route path={`/streams/1/v1`}>
+          <Drawer onClose={onCloseCb || jest.fn()} version="v1" />
+        </Route>
+      </Router>
+    );
+  };
+
   it('should close the drawer when no messageId is provided', () => {
     const container = render(
       <MemoryRouter>
-        <Drawer onCloseButtonClicked={jest.fn()} version={undefined} />
+        <Drawer onClose={jest.fn()} version={undefined} />
       </MemoryRouter>
     );
 
@@ -40,14 +50,8 @@ describe('message drawer specs', () => {
 
     await act(async () => {
       const history = createMemoryHistory();
-      history.push('/streams/1/version1')
-      const container = render(
-        <Router history={history}>
-          <Route path="/streams/1/version1">
-            <Drawer onCloseButtonClicked={jest.fn()} version={'version1'} />
-          </Route>
-        </Router>
-      );
+      history.push('/streams/1/v1')
+      const container = renderDrawerWithVersion(history);
       await flushPromises();
 
       expect(container.getByText('streamId')).toBeTruthy();
@@ -62,15 +66,9 @@ describe('message drawer specs', () => {
   it('should render a progress indicator when fetching the message', async () => {
     jest.spyOn(halRestClient, 'fetchResource');
     const history = createMemoryHistory();
-    history.push('/streams/1/version1');
+    history.push('/streams/1/v1');
 
-    const container = render(
-      <Router history={history}>
-        <Route path="/streams/1/version1">
-          <Drawer onCloseButtonClicked={jest.fn()} version={'version1'} />
-        </Route>
-      </Router>
-    );
+    const container = renderDrawerWithVersion(history);
 
     expect(container.getByRole('progressbar')).toBeTruthy();
 
@@ -83,36 +81,24 @@ describe('message drawer specs', () => {
     jest.spyOn(console, 'error').mockImplementation(() => { });
     jest.spyOn(halRestClient, 'fetchResource').mockRejectedValue(null);
     const history = createMemoryHistory();
-    history.push('/streams/1/version1');
+    history.push('/streams/1/v1');
 
     await act(async () => {
-      const container = render(
-        <Router history={history}>
-          <Route path="/streams/1/version1">
-            <Drawer onCloseButtonClicked={jest.fn()} version={'version1'} />
-          </Route>
-        </Router>
-      );
+      const container = renderDrawerWithVersion(history);
       await flushPromises();
 
       expect(container.getByText('An error occured while retrieving the message')).toBeTruthy();
     });
   });
 
-  it('calls the onCloseButtonClicked when close button is clicked', async () => {
+  it('calls the onClose when close button is clicked', async () => {
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(createMessageHalResult());
     const buttonClickSpy = jest.fn();
     const history = createMemoryHistory();
-    history.push('/streams/1/version1');
+    history.push('/streams/1/v1');
 
     await act(async () => {
-      render(
-        <Router history={history}>
-          <Route path="/streams/1/version1">
-            <Drawer onCloseButtonClicked={buttonClickSpy} version={'version1'} />
-          </Route>
-        </Router>
-      );
+      renderDrawerWithVersion(history, buttonClickSpy);
 
       await flushPromises();
       fireEvent.click(document.querySelector('button') as HTMLButtonElement);
@@ -127,17 +113,10 @@ describe('message drawer specs', () => {
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(invalidHalMessageWithoutPayload);
     const buttonClickSpy = jest.fn();
     const history = createMemoryHistory();
-    history.push('/streams/1/version1');
+    history.push('/streams/1/v1');
 
     await act(async () => {
-      const container = render(
-        <Router history={history}>
-          <Route path="/streams/1/version1">
-            <Drawer onCloseButtonClicked={buttonClickSpy} version={'version1'} />
-          </Route>
-        </Router>
-      );
-
+      const container = renderDrawerWithVersion(history, buttonClickSpy);
       await flushPromises();
 
       expect(container.getByText('Unable to parse json data')).toBeTruthy();
@@ -146,20 +125,13 @@ describe('message drawer specs', () => {
 
   it('should show delete message button when the message can be deleted', async () => {
     const history = createMemoryHistory()
-    history.push('/streams/1/version1');
+    history.push('/streams/1/v1');
     const halState = createMessageHalResult();
     halState.prop('streamStore:delete-message', {});
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halState);
 
     await act(async () => {
-      const container = render(
-        <Router history={history}>
-          <Route path="/streams/1/version1">
-            <Drawer onCloseButtonClicked={() => { }} version={'version1'} />
-          </Route>
-        </Router>
-      );
-
+      const container = renderDrawerWithVersion(history);
       await flushPromises();
 
       expect(container.getByTestId('delete-message-button')).toBeTruthy();
@@ -168,23 +140,16 @@ describe('message drawer specs', () => {
 
   it('should show when a message is successfully deleted', async () => {
     const history = createMemoryHistory()
-    history.push('/streams/1/version1');
+    history.push('/streams/1/v1');
     const halState = createMessageHalResult();
     halState.prop('streamStore:delete-message', {});
     jest.spyOn(halState, 'delete').mockResolvedValue(null);
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halState);
-    const closeButtonClicked = jest.fn();
+    const closeCallback = jest.fn();
     jest.spyOn(snackBar, 'triggerMessage');
 
     await act(async () => {
-      const container = render(
-        <Router history={history}>
-          <Route path="/streams/1/version1">
-            <Drawer onCloseButtonClicked={closeButtonClicked} version={'version1'} />
-          </Route>
-        </Router>
-      );
-
+      const container = renderDrawerWithVersion(history, closeCallback);
       await flushPromises();
 
       fireEvent.click(container.getByTestId('delete-message-button'));
@@ -192,7 +157,7 @@ describe('message drawer specs', () => {
 
       await wait(() => {
         expect(halState.delete).toHaveBeenCalled();
-        expect(closeButtonClicked).toHaveBeenCalled();
+        expect(closeCallback).toHaveBeenCalledWith(true);
         expect(snackBar.triggerMessage).toHaveBeenCalledWith({
           message: 'Successfully deleted the message',
           severity: 'success',
@@ -203,7 +168,7 @@ describe('message drawer specs', () => {
 
   it('should show when a message is NOT successfully deleted', async () => {
     const history = createMemoryHistory()
-    history.push('/streams/1/version1');
+    history.push('/streams/1/v1');
     const halState = createMessageHalResult();
     halState.prop('streamStore:delete-message', {});
     jest.spyOn(halState, 'delete').mockRejectedValue(null);
@@ -212,13 +177,7 @@ describe('message drawer specs', () => {
     jest.spyOn(snackBar, 'triggerMessage');
 
     await act(async () => {
-      const container = render(
-        <Router history={history}>
-          <Route path="/streams/1/version1">
-            <Drawer onCloseButtonClicked={closeButtonClicked} version={'version1'} />
-          </Route>
-        </Router>
-      );
+      const container = renderDrawerWithVersion(history, closeButtonClicked);
 
       await flushPromises();
 

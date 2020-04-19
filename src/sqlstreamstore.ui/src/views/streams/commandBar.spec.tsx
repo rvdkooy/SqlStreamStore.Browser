@@ -1,14 +1,14 @@
 import React from 'react';
 import { HalResource, URI, HalRestClient } from 'hal-rest-client';
-import { MemoryRouter, Router, Route } from 'react-router-dom';
+import { Router, Route } from 'react-router-dom';
 import { render, fireEvent, wait } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
-import SearchBar from './searchbar';
+import { createMemoryHistory, History } from 'history';
+import CommandBar from './commandBar';
 import * as snackBar from '../../components/messages/snackBar';
 
 const çreateBasicHalState = () => {
   const halRestClient = new HalRestClient();
-  const halState = new HalResource(halRestClient);
+  const halState = new HalResource(halRestClient, new URI('/'));
   halState.link('first', new HalResource(new HalRestClient(), new URI('/first')));
   halState.link('previous', new HalResource(new HalRestClient(), new URI('/previous')));
   halState.link('next', new HalResource(new HalRestClient(), new URI('/next')));
@@ -18,12 +18,22 @@ const çreateBasicHalState = () => {
 }
 
 describe('seachbar specs', () => {
-  it('should by default show the command buttons', () => {
-    const container = render(
-      <MemoryRouter>
-        <SearchBar halState={çreateBasicHalState()} />
-      </MemoryRouter>
+  const renderCommandBar = (halState: HalResource, history?: History) => {
+    if (!history) {
+      history = createMemoryHistory();
+      history.push('/streams');
+    }
+    return render(
+      <Router history={history}>
+        <Route path="/streams/:streamId?">
+          <CommandBar halState={halState} />
+        </Route>
+      </Router>
     );
+  };
+  
+  it('should by default show the command buttons', () => {
+    const container = renderCommandBar(çreateBasicHalState());
 
     expect(container.queryByTestId('open-search-button')).toBeTruthy();
     expect(container.queryByTestId('first-page-button')).toBeTruthy();
@@ -33,28 +43,20 @@ describe('seachbar specs', () => {
   });
 
   it('should show the search input when search button is clicked', () => {
-    const container = render(
-        <MemoryRouter>
-          <SearchBar halState={çreateBasicHalState()} />
-        </MemoryRouter>
-      );
+    const container = renderCommandBar(çreateBasicHalState());
 
     fireEvent.click(container.getByTestId('open-search-button'));
 
     expect(container.getByTestId('search-container')).toBeTruthy();
-    expect((container.queryByTestId('open-search-button'))).toBeFalsy();
-    expect((container.queryByTestId('first-page-button'))).toBeFalsy();
-    expect((container.queryByTestId('previous-page-button'))).toBeFalsy();
-    expect((container.queryByTestId('next-page-button'))).toBeFalsy();
-    expect((container.queryByTestId('last-page-button'))).toBeFalsy();
+    expect(container.queryByTestId('open-search-button')).toBeFalsy();
+    expect(container.queryByTestId('first-page-button')).toBeFalsy();
+    expect(container.queryByTestId('previous-page-button')).toBeFalsy();
+    expect(container.queryByTestId('next-page-button')).toBeFalsy();
+    expect(container.queryByTestId('last-page-button')).toBeFalsy();
   });
 
   it('should close the search input when close button is clicked', () => {
-    const container = render(
-        <MemoryRouter>
-          <SearchBar halState={çreateBasicHalState()} />
-        </MemoryRouter>
-      );
+    const container = renderCommandBar(çreateBasicHalState());
 
     fireEvent.click(container.getByTestId('open-search-button'));
     expect(container.getByTestId('search-container')).toBeTruthy();
@@ -65,17 +67,14 @@ describe('seachbar specs', () => {
 
   it('should call onSearchStreamId when submitting the search string', () => {
     const memoryHistory = createMemoryHistory();
-    
+    memoryHistory.push('/streams');
+    jest.spyOn(memoryHistory, 'push');
+
     const customHalState = new HalResource(çreateBasicHalState());
     customHalState.link('streamStore:find', new HalResource(new HalRestClient(), new URI('/find/{streamId}', true)));
     customHalState.prop('fromPosition', '1');
 
-    jest.spyOn(memoryHistory, 'push');
-    const container = render(
-        <Router history={memoryHistory}>
-          <SearchBar halState={customHalState} />
-        </Router>
-      );
+    const container = renderCommandBar(customHalState, memoryHistory);
 
     fireEvent.click(container.getByTestId('open-search-button'));
     fireEvent.change(container.getByLabelText('Search for stream id'), { target: { value: '1234' } })
@@ -86,15 +85,8 @@ describe('seachbar specs', () => {
   it('should open the search input when the route contains a streamid', () => {
     const history = createMemoryHistory()
     history.push('/streams/streamid');
+    const container = renderCommandBar(çreateBasicHalState(), history);
     
-    const container = render(
-        <Router history={history}>
-          <Route path="/streams/:streamId?">
-            <SearchBar halState={çreateBasicHalState()} />
-          </Route>
-        </Router>
-      );
-
     expect(container.getByTestId('search-container')).toBeTruthy();
   });
 
@@ -104,13 +96,7 @@ describe('seachbar specs', () => {
     const halState = çreateBasicHalState();
     halState.prop('streamStore:delete-stream', {});
 
-    const container = render(
-        <Router history={history}>
-          <Route path="/streams/:streamId?">
-            <SearchBar halState={halState} />
-          </Route>
-        </Router>
-      );
+    const container = renderCommandBar(halState, history);
 
     expect(container.getByTestId('delete-stream-button')).toBeTruthy();
   });
@@ -124,13 +110,7 @@ describe('seachbar specs', () => {
     history.push('/streams/streamid');
     halState.prop('streamStore:delete-stream', {});
 
-    const container = render(
-        <Router history={history}>
-          <Route path="/streams/:streamId?">
-            <SearchBar halState={halState} />
-          </Route>
-        </Router>
-      );
+    const container = renderCommandBar(halState, history);
     
     fireEvent.click(container.getByTestId('delete-stream-button'));
     fireEvent.click(container.getByTestId('confirm-button'));
@@ -155,13 +135,7 @@ describe('seachbar specs', () => {
     history.push('/streams/streamid');
     halState.prop('streamStore:delete-stream', {});
 
-    const container = render(
-        <Router history={history}>
-          <Route path="/streams/:streamId?">
-            <SearchBar halState={halState} />
-          </Route>
-        </Router>
-      );
+    const container = renderCommandBar(halState, history);
     
     fireEvent.click(container.getByTestId('delete-stream-button'));
     fireEvent.click(container.getByTestId('confirm-button'));
@@ -180,13 +154,7 @@ describe('seachbar specs', () => {
     const history = createMemoryHistory()
     history.push('/streams/streamid');
     
-    const container = render(
-        <Router history={history}>
-          <Route path="/streams/:streamId?">
-            <SearchBar halState={çreateBasicHalState()} />
-          </Route>
-        </Router>
-      );
+    const container = renderCommandBar(çreateBasicHalState(), history);
 
     expect(container.queryAllByTestId('search-container').length).toBeTruthy();
 

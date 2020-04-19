@@ -5,7 +5,7 @@ import { render, act } from '@testing-library/react';
 import Main from './main';
 import * as hal from '../../services/hal';
 import flushPromises from '../../testUtils/flushPromises';
-import { HalRestClient, HalResource } from 'hal-rest-client';
+import { HalRestClient, HalResource, URI } from 'hal-rest-client';
 
 jest.mock('./table', () => {
   return () => <div data-testid="mocked-table"></div>
@@ -23,7 +23,7 @@ describe('Main specs', () => {
   });
 
   it('should render a progress indicator when fetching the streams', async () => {
-    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(new HalResource(halRestClient));
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(new HalResource(halRestClient, new URI('/')));
     const history = createMemoryHistory()
     history.push('/stream');
 
@@ -42,7 +42,7 @@ describe('Main specs', () => {
   });
 
   it('should render the streams table when streams are fetched', async () => {
-    const halResourceWithMessages = new HalResource(halRestClient);
+    const halResourceWithMessages = new HalResource(halRestClient, new URI('/'));
     halResourceWithMessages.prop('streamStore:message', []);
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halResourceWithMessages);
 
@@ -59,7 +59,7 @@ describe('Main specs', () => {
   });
 
   it('should fetch the streams again when streamid changes', async () => {
-    const halResourceWithMessages = new HalResource(halRestClient);
+    const halResourceWithMessages = new HalResource(halRestClient, new URI('/'));
     halResourceWithMessages.prop('streamStore:message', []);
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halResourceWithMessages);
 

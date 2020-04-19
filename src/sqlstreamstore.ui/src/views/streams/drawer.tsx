@@ -30,14 +30,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface Props {
-  onCloseButtonClicked: () => void;
+  onClose: (refresh?: boolean) => void;
   version?: string;
 }
 
 const MessageDrawer = (props: Props) => {
   const classes = useStyles();
   const [status, updateStatus] = useState('loading');
-  const [halResource, setHalResource] = useState<HalResource | null>();
+  const [halResource, updateHalResource] = useState<HalResource | null>();
   const [openDeleteModal, updateOpenDeleteModal] = useState(false);
   const previousVersion = usePrevious(props.version);
   const halClient = getHalClient();
@@ -45,13 +45,13 @@ const MessageDrawer = (props: Props) => {
 
   useEffect(() => {
     if (!props.version && previousVersion) {
-      setHalResource(null);
+      updateHalResource(null);
     } else if (previousVersion !== props.version) {
       const retrieveMessage = async () => {
         try {
           updateStatus('loading');
           const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}`);
-          setHalResource(fetchHalResponse);
+          updateHalResource(fetchHalResponse);
           updateStatus('done');
         } catch (err) {
           console.error(err);
@@ -70,7 +70,7 @@ const MessageDrawer = (props: Props) => {
           message: 'Successfully deleted the message',
           severity: "success",
         });
-        props.onCloseButtonClicked();
+        props.onClose(true);
       }
     } catch (err) {
       console.error(err);
@@ -87,7 +87,7 @@ const MessageDrawer = (props: Props) => {
   return (
     <Drawer anchor="right" open={!!props.version} >
       <div className={classes.drawerHeader}>
-        <IconButton onClick={props.onCloseButtonClicked}>
+        <IconButton onClick={() => props.onClose()}>
           <CloseIcon />
         </IconButton>
 
@@ -97,7 +97,6 @@ const MessageDrawer = (props: Props) => {
               data-testid="delete-message-button"
               size="small"
               color="secondary"
-              variant="contained"
               onClick={() => updateOpenDeleteModal(true)}
               startIcon={<DeleteButton />}  
             >
@@ -123,7 +122,9 @@ const MessageDrawer = (props: Props) => {
           open={openDeleteModal}
           onClose={() => updateOpenDeleteModal(false)}
           onConfirm={onConfirmDelete}
-        />
+        >
+          <span>This action cannot be undone. This will permanently delete the message.</span>
+        </ConfirmDeleteModal>
       </div>
     </Drawer>
   );

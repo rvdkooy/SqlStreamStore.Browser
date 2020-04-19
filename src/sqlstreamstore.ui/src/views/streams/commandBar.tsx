@@ -41,7 +41,7 @@ interface Props {
   halState: HalResource;
 }
 
-export default function SearchBar(props: Props) {
+export default function CommandBar(props: Props) {
   const { halState } = props;
   const classes = useStyles();
   const history = useHistory();
@@ -91,6 +91,8 @@ export default function SearchBar(props: Props) {
     }
   };
 
+  const positionPrefix = (halState.uri.uri.indexOf('d=f') !== -1) ? 'Forwards' : 'Backwards';
+
   return (
     <div>
       {
@@ -124,7 +126,6 @@ export default function SearchBar(props: Props) {
                   data-testid="delete-stream-button"
                   size="small"
                   color="secondary"
-                  variant="contained"
                   onClick={() => updateOpenDeleteModal(true)}
                   startIcon={<Delete />}  
                 >
@@ -164,7 +165,9 @@ export default function SearchBar(props: Props) {
             >
               <KeyboardArrowLeft />
             </IconButton>
-            <Typography>{`from position ${props.halState.prop('fromPosition')}`}</Typography>
+
+            <Typography>{`${positionPrefix} from position ${props.halState.prop('fromPosition')}`}</Typography>
+            
             <IconButton
               disabled={!halState.link('next')}
               aria-label="next page"
@@ -191,7 +194,9 @@ export default function SearchBar(props: Props) {
         open={openDeleteModal}
         onClose={() => updateOpenDeleteModal(false)}
         onConfirm={onConfirmDelete}
-      />
+      >
+        <span>This action cannot be undone. This will permanently delete the stream.</span>
+      </ConfirmDeleteModal>
     </div>
   );
 }

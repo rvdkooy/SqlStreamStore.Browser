@@ -10,6 +10,7 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  children: JSX.Element | JSX.Element[];
 }
 
 const ConfirmDelete = (props: Props) => {
@@ -18,7 +19,7 @@ const ConfirmDelete = (props: Props) => {
       <DialogTitle id="form-dialog-title">Are you absolutely sure?</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          This action cannot be undone. This will permanently delete the stream.
+          { props.children }
         </DialogContentText>
       </DialogContent>
       <DialogActions>
