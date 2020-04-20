@@ -3,7 +3,6 @@ import { useParams, useHistory, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,8 +11,6 @@ import { FirstPage, LastPage, KeyboardArrowLeft,
 import { Typography } from '@material-ui/core';
 import usePrevious from '../../components/hooks/usePrevious';
 import { HalResource } from 'hal-rest-client';
-import ConfirmDeleteModal from './confirmDelete';
-import { triggerMessage } from '../../components/messages/snackBar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,10 +33,15 @@ const useStyles = makeStyles(theme => ({
     height: 28,
     margin: 4,
   },
+  button: {
+    marginLeft: theme.spacing(2),
+  }
 }));
 
 interface Props {
   halState: HalResource;
+  onDeleteStream: () => void;
+  onAppendStream: () => void;
 }
 
 export default function CommandBar(props: Props) {
@@ -48,7 +50,6 @@ export default function CommandBar(props: Props) {
   const history = useHistory();
   const [showSearchInputField, updateShowSearchInputField] = useState(false);
   const [searchString, updateSearchString] = useState('');
-  const [openDeleteModal, updateOpenDeleteModal] = useState(false);
   const params = useParams<{ streamId: string }>();
   const prevStreamId = usePrevious(params.streamId);
 
@@ -72,24 +73,6 @@ export default function CommandBar(props: Props) {
     updateSearchString('');
     updateShowSearchInputField(false);
     history.push('/stream'); // TODO: we lost the link to the all streams from here
-  };
-
-  const onConfirmDelete = async () => {
-    try {
-      await halState.delete();
-      history.push('/stream');
-      triggerMessage({
-        message: 'Successfully deleted the stream',
-        severity: "success",
-      });
-    } catch (err) {
-      console.error(err);
-      history.push('/stream');
-      triggerMessage({
-        message: 'Couldn\'t delete the stream',
-        severity: "error",
-      });
-    }
   };
 
   const positionPrefix = (halState.uri.uri.indexOf('d=f') !== -1) ? 'Forwards' : 'Backwards';
@@ -122,30 +105,32 @@ export default function CommandBar(props: Props) {
               </IconButton>
             </Paper>
             <div>
-              <ButtonGroup size="small" color="primary">
-                {
-                  (halState.prop('streamStore:delete-stream')) ? 
-                    <Button
-                      data-testid="delete-stream-button"
-                      color="secondary"
-                      onClick={() => updateOpenDeleteModal(true)}
-                      startIcon={<Delete />}  
-                    >
-                      Delete stream
-                    </Button> : null
-                }
-                {
-                  (halState && halState.prop('streamStore:append')) ? 
-                    <Button
-                      data-testid="append-stream-button"
-                      onClick={() => {}}
-                      startIcon={<Add />}  
-                    >
-                      Append message
-                    </Button> : null
-                }
-              </ButtonGroup>
-
+              {
+                (halState.prop('streamStore:delete-stream')) ? 
+                  <Button
+                    className={classes.button}
+                    data-testid="delete-stream-button"
+                    variant="outlined"
+                    color="secondary"
+                    onClick={props.onDeleteStream}
+                    startIcon={<Delete />}  
+                  >
+                    Delete stream
+                  </Button> : null
+              }
+              {
+                (halState && halState.prop('streamStore:append')) ? 
+                  <Button
+                    className={classes.button}
+                    data-testid="append-stream-button"
+                    variant="outlined"
+                    onClick={props.onAppendStream}
+                    startIcon={<Add />}
+                    color="primary"  
+                  >
+                    Append message
+                  </Button> : null
+              }
             </div>
           </div>
           :
@@ -205,13 +190,7 @@ export default function CommandBar(props: Props) {
             </IconButton>
           </div>
       }
-      <ConfirmDeleteModal
-        open={openDeleteModal}
-        onClose={() => updateOpenDeleteModal(false)}
-        onConfirm={onConfirmDelete}
-      >
-        <span>This action cannot be undone. This will permanently delete the stream.</span>
-      </ConfirmDeleteModal>
+      
     </div>
   );
 }

@@ -7,8 +7,10 @@ import ErrorMessage from '../../components/messages/message';
 import StreamsTable from './table';
 import MessageDrawer from './drawer';
 import { HalResource } from 'hal-rest-client';
-import usePrevious from '../../components/hooks/usePrevious'
-import useHalClient from '../../components/hooks/useHalClient'
+import usePrevious from '../../components/hooks/usePrevious';
+import ConfirmDeleteModal from './confirmDelete';
+import useHalClient from '../../components/hooks/useHalClient';
+import { triggerMessage } from '../../components/messages/snackBar';
 
 const useStyles = makeStyles({
   root: {
@@ -23,6 +25,7 @@ const StreamsView = () => {
   const classes = useStyles();
   const history = useHistory();
   const params = useParams<{ streamId: string, version: string }>();
+  const [openDeleteModal, updateOpenDeleteModal] = useState(false);
   const [halState, updateHalState] = useState<HalResource>();
   const [messages, updateMessages] = useState<HalResource[]>([]);
   const [status, updateStatus] = useState('loading');
@@ -66,6 +69,26 @@ const StreamsView = () => {
     }
   };
 
+  const onConfirmDelete = async () => {
+    try {
+      if (halState) {
+        await halState.delete();
+        history.push('/stream');
+        triggerMessage({
+          message: 'Successfully deleted the stream',
+          severity: "success",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      history.push('/stream');
+      triggerMessage({
+        message: 'Couldn\'t delete the stream',
+        severity: "error",
+      });
+    }
+  };
+  
   return (
     <div className={classes.root}>
       {
@@ -78,13 +101,24 @@ const StreamsView = () => {
         (status === 'done' && halState) ?
           <div>
             <div className={classes.searchContainer}>
-              <CommandBar halState={halState} />
+              <CommandBar
+                halState={halState}
+                onDeleteStream={() => updateOpenDeleteModal(true)}
+                onAppendStream={() => {}}
+              />
             </div>
             <StreamsTable streams={messages} />
             <MessageDrawer
               onClose={onDrawerClose}
               version={params.version}
             />
+            <ConfirmDeleteModal
+              open={openDeleteModal}
+              onClose={() => updateOpenDeleteModal(false)}
+              onConfirm={onConfirmDelete}
+            >
+              <span>This action cannot be undone. This will permanently delete the stream.</span>
+            </ConfirmDeleteModal>
           </div> : null
       }
     </div>
