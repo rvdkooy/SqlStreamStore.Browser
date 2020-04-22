@@ -63,28 +63,33 @@ namespace build
                 ),
                 project => Run("dotnet", $"pack src/{project}/{project}.csproj -c Release -o ./{ArtifactsDir} --no-build"));
 
-            // Target(Publish, DependsOn(Pack), () =>
-            // {
-            //     var packagesToPush = Directory.GetFiles($"./{ArtifactsDir}", "*.nupkg", SearchOption.TopDirectoryOnly);
-            //     Console.WriteLine($"Found packages to publish: {string.Join("; ", packagesToPush)}");
+            Target(Publish, DependsOn(Pack), () =>
+            {
+                var packagesToPush = Directory.GetFiles($"./{ArtifactsDir}", "*.nupkg", SearchOption.TopDirectoryOnly);
+                Console.WriteLine($"Found packages to publish: {string.Join("; ", packagesToPush)}");
 
-            //     var apiKey = Environment.GetEnvironmentVariable("NUGET_API_KEY");
+                var apiKey = Environment.GetEnvironmentVariable("FEEDZ_API_KEY");
+                var branch = Environment.GetEnvironmentVariable("GITHUB_REF");
 
+                if (string.IsNullOrWhiteSpace(apiKey))
+                {
+                    Console.WriteLine("API key not available. Packages will not be pushed.");
+                    return;
+                }
 
-            //     if (string.IsNullOrWhiteSpace(apiKey))
-            //     {
-            //         Console.WriteLine("API key not available. Packages will not be pushed.");
-            //         return;
-            //     }
+                if (String.Equals(branch, "master", StringComparison.OrdinalIgnoreCase)) {
+                    Console.WriteLine("Not on master branch, skipping publish.");
+                    return;
+                }
 
-            //     foreach (var packageToPush in packagesToPush)
-            //     {
-            //         Run("dotnet", $"nuget push {packageToPush} -k {apiKey} -s https://api.nuget.org/v3/index.json --skip-duplicate", noEcho: true);
-            //     }
-            // });
+                foreach (var packageToPush in packagesToPush)
+                {
+                    Run("dotnet", $"nuget push {packageToPush} -k {apiKey} -s https://f.feedz.io/logicality/streamstore-ci/nuget/index.json --skip-duplicate", noEcho: true);
+                }
+            });
 
             Target("default",
-                DependsOn(Pack), () =>
+                DependsOn(Publish), () =>
                 {
                     if (s_oneOrMoreTestsFailed)
                     {
