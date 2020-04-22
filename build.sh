@@ -8,6 +8,6 @@ docker run --rm -i --name sssb-build \
  --network host \
  -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER \
  -e FEEDZ_API_KEY=$FEEDZ_API_KEY \
- -e GITHUB_REF=$GITHUB_REF \
+ -e GITHUB_REF=${GITHUB_REF##*/} \
  sssb-build \
  dotnet run -p /repo/src/SqlStreamStore.Browser.Build/SqlStreamStore.Browser.Build.csproj -- "$@"
