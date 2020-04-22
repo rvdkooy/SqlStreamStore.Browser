@@ -77,7 +77,7 @@ namespace build
                     return;
                 }
 
-                if (String.Equals(branch, "master", StringComparison.OrdinalIgnoreCase)) {
+                if (!String.Equals(branch, "master", StringComparison.OrdinalIgnoreCase)) {
                     Console.WriteLine($"Not on master branch, but on {branch}. Skipping publish.");
                     return;
                 }
