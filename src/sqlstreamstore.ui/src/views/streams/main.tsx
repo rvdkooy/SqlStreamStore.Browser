@@ -9,8 +9,10 @@ import MessageDrawer from './drawer';
 import { HalResource } from 'hal-rest-client';
 import usePrevious from '../../components/hooks/usePrevious';
 import ConfirmDeleteModal from './confirmDelete';
+import AppendToStreamModal from './appendToStreamModal';
 import useHalClient from '../../components/hooks/useHalClient';
 import { triggerMessage } from '../../components/messages/snackBar';
+import { v4 } from 'uuid';
 
 const useStyles = makeStyles({
   root: {
@@ -26,6 +28,7 @@ const StreamsView = () => {
   const history = useHistory();
   const params = useParams<{ streamId: string, version: string }>();
   const [openDeleteModal, updateOpenDeleteModal] = useState(false);
+  const [openAppendModal, updateOpenAppendModal] = useState(false);
   const [halState, updateHalState] = useState<HalResource>();
   const [messages, updateMessages] = useState<HalResource[]>([]);
   const [status, updateStatus] = useState('loading');
@@ -33,6 +36,7 @@ const StreamsView = () => {
   const halClient = useHalClient();
   const routeMatch = useRouteMatch();
   const queryStrings = useLocation().search;
+
   
   const retrieveStreams = useCallback(async () => {
     try {
@@ -88,6 +92,29 @@ const StreamsView = () => {
       });
     }
   };
+
+  const onConfirmSubmit = async (type: string, jsonData: string) => {
+    try {
+      if (halState) {
+        await halClient.create(halState.uri.uri, {
+          messageId: v4(),
+          type,
+          jsonData: JSON.parse(jsonData),
+        });
+        updateOpenAppendModal(false);
+        triggerMessage({
+          message: 'Successfully appended a message to the stream',
+          severity: "success",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      triggerMessage({
+        message: 'Couldn\'t append a message the to stream',
+        severity: "error",
+      });
+    }
+  };
   
   return (
     <div className={classes.root}>
@@ -104,7 +131,7 @@ const StreamsView = () => {
               <CommandBar
                 halState={halState}
                 onDeleteStream={() => updateOpenDeleteModal(true)}
-                onAppendStream={() => {}}
+                onAppendStream={() => updateOpenAppendModal(true)}
               />
             </div>
             <StreamsTable streams={messages} />
@@ -119,6 +146,11 @@ const StreamsView = () => {
             >
               <span>This action cannot be undone. This will permanently delete the stream.</span>
             </ConfirmDeleteModal>
+            <AppendToStreamModal
+              open={openAppendModal}
+              onClose={() => updateOpenAppendModal(false)}
+              onSubmit={onConfirmSubmit}
+            />
           </div> : null
       }
     </div>

@@ -102,7 +102,7 @@ describe('Main specs', () => {
     });
   });
 
-  it('should show when a stream is successfully deleted', async () => {
+  it('should notify when a stream is successfully deleted', async () => {
     const history = createMemoryHistory()
     history.push('/stream/1');
     defaultHalresponse.prop('streamStore:delete-stream', {});
@@ -133,7 +133,7 @@ describe('Main specs', () => {
     });
   });
 
-  it('should show when a stream is NOT successfully deleted', async () => {
+  it('should notify when a stream is NOT successfully deleted', async () => {
     const history = createMemoryHistory()
     history.push('/stream/1');
     defaultHalresponse.prop('streamStore:delete-stream', {});
@@ -160,6 +160,68 @@ describe('Main specs', () => {
       expect(history.push).toHaveBeenCalledWith('/stream');
       expect(snackBar.triggerMessage).toHaveBeenCalledWith({
         message: 'Couldn\'t delete the stream',
+        severity: 'error',
+      });
+    });
+  });
+
+  it('should notify when a message was appended to a stream', async () => {
+    const history = createMemoryHistory()
+    history.push('/stream/1');
+    defaultHalresponse.prop('streamStore:append', {});
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(defaultHalresponse);
+    jest.spyOn(halRestClient, 'create').mockResolvedValue(null);
+    jest.spyOn(snackBar, 'triggerMessage');
+
+    const container = render(
+      <Router history={history}>
+        <Route path="/stream/:streamId?">
+          <Main />
+        </Route>
+      </Router>
+    );
+    await flushPromises();
+    
+    fireEvent.click(container.getByTestId('append-stream-button'));
+    fireEvent.change(document.querySelector('input[name="type"]') as HTMLInputElement, { target: { value: 'test' } })
+    fireEvent.change(document.querySelector('textarea[name="jsondata"]') as HTMLInputElement, { target: { value: '{ "foo": "baz" }' } })
+    fireEvent.click(container.getByTestId('submit-button'));
+    await flushPromises();
+    await wait(() => {
+      expect(halRestClient.create).toHaveBeenCalled();
+      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
+        message: 'Successfully appended a message to the stream',
+        severity: 'success',
+      });
+    });
+  });
+
+  it('should notify when a message was NOT successfully appended to a stream', async () => {
+    const history = createMemoryHistory()
+    history.push('/stream/1');
+    defaultHalresponse.prop('streamStore:append', {});
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(defaultHalresponse);
+    jest.spyOn(halRestClient, 'create').mockRejectedValue(null);
+    jest.spyOn(snackBar, 'triggerMessage');
+
+    const container = render(
+      <Router history={history}>
+        <Route path="/stream/:streamId?">
+          <Main />
+        </Route>
+      </Router>
+    );
+    await flushPromises();
+    
+    fireEvent.click(container.getByTestId('append-stream-button'));
+    fireEvent.change(document.querySelector('input[name="type"]') as HTMLInputElement, { target: { value: 'test' } })
+    fireEvent.change(document.querySelector('textarea[name="jsondata"]') as HTMLInputElement, { target: { value: '{ "foo": "baz" }' } })
+    fireEvent.click(container.getByTestId('submit-button'));
+    await flushPromises();
+    await wait(() => {
+      expect(halRestClient.create).toHaveBeenCalled();
+      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
+        message: 'Couldn\'t append a message the to stream',
         severity: 'error',
       });
     });
