@@ -4,7 +4,6 @@ import { Router, Route } from 'react-router-dom';
 import { render, fireEvent, wait } from '@testing-library/react';
 import { createMemoryHistory, History } from 'history';
 import CommandBar from './commandBar';
-import * as snackBar from '../../components/messages/snackBar';
 
 const çreateBasicHalState = () => {
   const halRestClient = new HalRestClient();
@@ -26,7 +25,7 @@ describe('seachbar specs', () => {
     return render(
       <Router history={history}>
         <Route path="/streams/:streamId?">
-          <CommandBar halState={halState} />
+          <CommandBar halState={halState} onAppendStream={jest.fn} onDeleteStream={jest.fn} />
         </Route>
       </Router>
     );
@@ -101,55 +100,6 @@ describe('seachbar specs', () => {
     expect(container.getByTestId('delete-stream-button')).toBeTruthy();
   });
 
-  it('should show when a stream is successfully deleted', async () => {
-    const history = createMemoryHistory()
-    const halState = çreateBasicHalState();
-    jest.spyOn(halState, 'delete').mockResolvedValue(null);
-    jest.spyOn(history, 'push');
-    jest.spyOn(snackBar, 'triggerMessage');
-    history.push('/streams/streamid');
-    halState.prop('streamStore:delete-stream', {});
-
-    const container = renderCommandBar(halState, history);
-    
-    fireEvent.click(container.getByTestId('delete-stream-button'));
-    fireEvent.click(container.getByTestId('confirm-button'));
-    
-    await wait(() => {
-      expect(halState.delete).toHaveBeenCalled();
-      expect(history.push).toHaveBeenCalledWith('/stream');
-      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
-        message: 'Successfully deleted the stream',
-        severity: 'success',
-      });
-    });
-  });
-
-  it('should show when a stream is NOT successfully deleted', async () => {
-    const history = createMemoryHistory()
-    const halState = çreateBasicHalState();
-    jest.spyOn(console, 'error').mockReturnValue();
-    jest.spyOn(halState, 'delete').mockRejectedValue(null);
-    jest.spyOn(history, 'push');
-    jest.spyOn(snackBar, 'triggerMessage');
-    history.push('/streams/streamid');
-    halState.prop('streamStore:delete-stream', {});
-
-    const container = renderCommandBar(halState, history);
-    
-    fireEvent.click(container.getByTestId('delete-stream-button'));
-    fireEvent.click(container.getByTestId('confirm-button'));
-    
-    await wait(() => {
-      expect(halState.delete).toHaveBeenCalled();
-      expect(history.push).toHaveBeenCalledWith('/stream');
-      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
-        message: 'Couldn\'t delete the stream',
-        severity: 'error',
-      });
-    });
-  });
-
   it('should close the search input when the route removes a streamid', async () => {
     const history = createMemoryHistory()
     history.push('/streams/streamid');
@@ -163,5 +113,16 @@ describe('seachbar specs', () => {
     await wait(() => {
       expect(container.queryAllByTestId('search-container').length).toBeFalsy();
     });
+  });
+
+  it('should show append to stream button when can be appended to stream', () => {
+    const history = createMemoryHistory()
+    history.push('/streams/streamid');
+    const halState = çreateBasicHalState();
+    halState.prop('streamStore:append', {});
+
+    const container = renderCommandBar(halState, history);
+
+    expect(container.getByTestId('append-stream-button')).toBeTruthy();
   });
 });
