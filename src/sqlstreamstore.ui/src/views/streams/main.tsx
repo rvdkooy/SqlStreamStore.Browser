@@ -77,6 +77,7 @@ const StreamsView = () => {
     try {
       if (halState) {
         await halState.delete();
+        updateOpenDeleteModal(false);
         history.push('/stream');
         triggerMessage({
           message: 'Successfully deleted the stream',
