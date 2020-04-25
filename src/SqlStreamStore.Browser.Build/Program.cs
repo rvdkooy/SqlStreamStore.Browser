@@ -66,6 +66,7 @@ namespace build
             Target(Publish, DependsOn(Pack), () =>
             {
                 var githubref = Environment.GetEnvironmentVariable("GITHUB_REF");
+                Console.WriteLine("GITHUB_REF: " + githubref);
 
                 if (githubref.ToLower().Contains("refs/heads/master") || githubref.ToLower().Contains("refs/tags/v")) {
                     var apiKey = Environment.GetEnvironmentVariable("FEEDZ_API_KEY");
