@@ -42,6 +42,10 @@ export const listenOffMessages = (cb: (message: SnackbarMessage) => void) => {
   _snackbarListeners = _snackbarListeners.filter(l => l !== cb);
 };
 
-export const triggerMessage = (message: SnackbarMessage) => {
-  _snackbarListeners.forEach(l => l(message));
+export const triggerSuccessMessage = (message: string) => {
+  _snackbarListeners.forEach(l => l({ message, severity: 'success' }));
+};
+  
+export const triggerErrorMessage = (message: string) => {
+  _snackbarListeners.forEach(l => l({ message, severity: 'error' }));
 };

@@ -119,7 +119,7 @@ export default function CommandBar(props: Props) {
                   </Button> : null
               }
               {
-                (halState && halState.prop('streamStore:append')) ? 
+                (halState.prop('streamStore:append')) ? 
                   <Button
                     className={classes.button}
                     data-testid="append-stream-button"

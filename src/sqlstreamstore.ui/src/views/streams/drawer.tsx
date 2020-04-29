@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteButton from '@material-ui/icons/Delete';
 import ConfirmDeleteModal from './confirmDelete';
-import { triggerMessage } from '../../components/messages/snackBar';
+import { triggerSuccessMessage, triggerErrorMessage } from '../../components/messages/snackBar';
 import MessageContent from './messageContent';
 import { HalResource } from 'hal-rest-client';
 import { getHalClient } from '../../services/hal';
@@ -40,7 +40,7 @@ const MessageDrawer = (props: Props) => {
   const [halResource, updateHalResource] = useState<HalResource | null>();
   const [openDeleteModal, updateOpenDeleteModal] = useState(false);
   const previousVersion = usePrevious(props.version);
-  const halClient = getHalClient();
+  
   const routeMatch = useRouteMatch();
 
   useEffect(() => {
@@ -50,6 +50,7 @@ const MessageDrawer = (props: Props) => {
       const retrieveMessage = async () => {
         try {
           updateStatus('loading');
+          const halClient = getHalClient();
           const fetchHalResponse = await halClient.fetchResource(`.${routeMatch.url}`);
           updateHalResource(fetchHalResponse);
           updateStatus('done');
@@ -60,24 +61,18 @@ const MessageDrawer = (props: Props) => {
       }
       retrieveMessage();
     }
-  }, [props.version, previousVersion, halClient, routeMatch.url]);
+  }, [props.version, previousVersion, routeMatch.url]);
 
   const onConfirmDelete = async () => {
     try {
       if (halResource) {
         await halResource.delete();
-        triggerMessage({
-          message: 'Successfully deleted the message',
-          severity: "success",
-        });
+        triggerSuccessMessage('Successfully deleted the message');
         props.onClose(true);
       }
     } catch (err) {
       console.error(err);
-      triggerMessage({
-        message: 'Couldn\'t delete the message',
-        severity: "error",
-      });
+      triggerErrorMessage('Couldn\'t delete the message');
     }
     finally{
       updateOpenDeleteModal(false);
