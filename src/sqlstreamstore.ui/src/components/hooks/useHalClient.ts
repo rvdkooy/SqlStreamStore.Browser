@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { getHalClient } from '../../services/hal';
 
-const usePrevious = () => {
+const useHalClient = () => {
   const [halState] = useState(getHalClient());
   return halState;
 }
 
-export default usePrevious;
+export default useHalClient;

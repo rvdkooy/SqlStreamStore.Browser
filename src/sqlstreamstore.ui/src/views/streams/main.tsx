@@ -10,7 +10,7 @@ import { HalResource } from 'hal-rest-client';
 import usePrevious from '../../components/hooks/usePrevious';
 import ConfirmDeleteModal from './confirmDelete';
 import AppendToStreamModal from './appendToStreamModal';
-import { getHalClient } from '../../services/hal';
+import useHalClient from '../../components/hooks/useHalClient';
 import { triggerSuccessMessage, triggerErrorMessage } from '../../components/messages/snackBar';
 import { v4 } from 'uuid';
 
@@ -43,15 +43,14 @@ const StreamsView = () => {
   });
   const params = useParams<{ streamId: string, version: string }>();
   const previousStreamId = usePrevious(params.streamId);
-  const previousVersion = usePrevious(params.version);
   const routeMatch = useRouteMatch();
   const queryStrings = useLocation().search;
+  const halClient = useHalClient();
 
-  const retrieveStreams = useCallback(async () => {
+  const retrieveStreams = useCallback(async (url: string, query: string) => {
     try {
-      const halClient = getHalClient();
       setState((prevState) => ({ ...prevState, status: 'loading' }));
-      let halResponse = await halClient.fetchResource(`.${routeMatch.url}${queryStrings}`);
+      let halResponse = await halClient.fetchResource(`.${url}${query}`);
       const streamStoreMessages = halResponse.prop('streamStore:message');
       let messages = streamStoreMessages;
       
@@ -64,20 +63,20 @@ const StreamsView = () => {
       console.error(err);
       setState((prevState) => ({ ...prevState, status: 'error' }));
     }
-  }, [routeMatch.url, queryStrings]);
+  }, [halClient]);
 
   useEffect(() => {
     if (!params.streamId || params.streamId !== previousStreamId) {
-      retrieveStreams();
+      retrieveStreams(routeMatch.url, queryStrings);
     }
-    if (previousVersion && !params.version) {
-      retrieveStreams();
-    }
-  }, [params.streamId, previousStreamId, previousVersion, params.version, retrieveStreams ]);
+  }, [params.streamId, previousStreamId, routeMatch.url, queryStrings, retrieveStreams ]);
 
-  const onDrawerClose = () => {
+  const onDrawerClose = (refresh?: boolean) => {
     if (state.halState) {
       history.push('../' + state.halState.link('streamStore:feed').uri.uri);
+    }
+    if (refresh) {
+      retrieveStreams(routeMatch.url, queryStrings);
     }
   };
 
@@ -99,7 +98,6 @@ const StreamsView = () => {
   const onConfirmSubmit = async (type: string, jsonData: string) => {
     try {
       if (state.halState) {
-        const halClient = getHalClient();
         await halClient.create(state.halState.uri.uri, {
           messageId: v4(),
           type,
@@ -113,7 +111,7 @@ const StreamsView = () => {
       triggerErrorMessage('Couldn\'t append a message the to stream');
     }
   };
-  
+
   return (
     <div className={classes.root}>
       {
