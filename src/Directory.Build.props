@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <MinVerVerbosity>detailed</MinVerVerbosity>
+    <MinVerVerbosity>diagnostic</MinVerVerbosity>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MinVer" Version="2.0.0" PrivateAssets="All" />
