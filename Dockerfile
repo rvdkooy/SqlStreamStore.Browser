@@ -5,7 +5,9 @@ RUN apk add yarn
 
 WORKDIR /repo
 
+
 COPY ./src ./src/
+COPY ./.git ./.git/
 COPY ./*.sln .
 
 # COPY ./NuGet.Config ./
