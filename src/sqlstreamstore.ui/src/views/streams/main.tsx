@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory, useParams, useRouteMatch, useLocation } from 'react-router-dom';
 import CommandBar from './commandBar';
 import ProgressIndicator from '../../components/progressIndicator';
@@ -47,36 +47,42 @@ const StreamsView = () => {
   const queryStrings = useLocation().search;
   const halClient = useHalClient();
 
-  const retrieveStreams = useCallback(async (url: string, query: string) => {
-    try {
-      setState((prevState) => ({ ...prevState, status: 'loading' }));
-      let halResponse = await halClient.fetchResource(`.${url}${query}`);
-      const streamStoreMessages = halResponse.prop('streamStore:message');
-      let messages = streamStoreMessages;
-      
-      if (streamStoreMessages instanceof HalResource) {
-        halResponse = await halClient.fetchResource(streamStoreMessages.link('streamStore:feed').uri.uri);
-        messages = halResponse.prop('streamStore:message');
-      }
-      setState((prevState) => ({ ...prevState, halState: halResponse, messages, status: 'done' }));
-    } catch (err) {
-      console.error(err);
-      setState((prevState) => ({ ...prevState, status: 'error' }));
-    }
-  }, [halClient]);
-
   useEffect(() => {
-    if (!params.streamId || params.streamId !== previousStreamId) {
+    const retrieveStreams = async (url: string, query: string) => {
+      try {
+        setState((prevState) => ({ ...prevState, status: 'loading' }));
+        let halResponse = await halClient.fetchResource(`.${url}${query}`);
+        const streamStoreMessages = halResponse.prop('streamStore:message');
+        let messages = streamStoreMessages;
+        
+        if (streamStoreMessages instanceof HalResource) {
+          halResponse = await halClient.fetchResource(streamStoreMessages.link('streamStore:feed').uri.uri);
+          messages = halResponse.prop('streamStore:message');
+        }
+        setState((prevState) => ({ ...prevState, halState: halResponse, messages, status: 'done' }));
+      } catch (err) {
+        console.error(err);
+        setState((prevState) => ({ ...prevState, status: 'error' }));
+      }
+    }
+    
+    if (!params.streamId || (params.streamId !== previousStreamId)) {
       retrieveStreams(routeMatch.url, queryStrings);
     }
-  }, [params.streamId, previousStreamId, routeMatch.url, queryStrings, retrieveStreams ]);
+    
+    const queryParams = new URLSearchParams(queryStrings);
+    if (queryParams.get('refresh') === 'true') {
+      queryParams.delete('refresh');
+      retrieveStreams(routeMatch.url, (queryParams.toString()) ? `?${queryParams.toString()}` : '');
+    }
+  }, [params.streamId, previousStreamId, routeMatch.url, queryStrings, halClient ]);
 
   const onDrawerClose = (refresh?: boolean) => {
     if (state.halState) {
-      history.push('../' + state.halState.link('streamStore:feed').uri.uri);
-    }
-    if (refresh) {
-      retrieveStreams(routeMatch.url, queryStrings);
+      let uri = (refresh) ?
+        state.halState.link('streamStore:feed').uri.uri + '&refresh=true' :
+        state.halState.link('streamStore:feed').uri.uri;
+      history.push('../' + uri);
     }
   };
 
@@ -131,10 +137,7 @@ const StreamsView = () => {
               />
             </div>
             <StreamsTable streams={state.messages} />
-            <MessageDrawer
-              onClose={onDrawerClose}
-              version={params.version}
-            />
+            
             <ConfirmDeleteModal
               open={state.openDeleteModal}
               onClose={() => setState({ ...state, openDeleteModal: false })}
@@ -149,6 +152,10 @@ const StreamsView = () => {
             />
           </div> : null
       }
+      <MessageDrawer
+        onClose={onDrawerClose}
+        version={params.version}
+      />
     </div>
   );
 };

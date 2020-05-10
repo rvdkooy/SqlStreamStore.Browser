@@ -85,6 +85,31 @@ describe('Main specs', () => {
     });
   });
 
+  it('should fetch the streams again when querystring refresh=true', async () => {
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(defaultHalresponse);
+
+    const history = createMemoryHistory()
+    history.push('/stream/1');
+
+    render(
+      <Router history={history}>
+        <Route path="/stream/:streamId?">
+          <Main />
+        </Route>
+      </Router>
+    );
+
+    await act(async () => {
+      await flushPromises();
+      history.push('/stream/1?refresh=true');
+      await flushPromises();
+
+      expect(halRestClient.fetchResource).toHaveBeenCalledTimes(2);
+      expect(halRestClient.fetchResource).toHaveBeenNthCalledWith(1, './stream/1');
+      expect(halRestClient.fetchResource).toHaveBeenNthCalledWith(2, './stream/1');
+    });
+  });
+
   it('should render an error message when fetching failed', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => { });
     jest.spyOn(halRestClient, 'fetchResource').mockRejectedValue('');
