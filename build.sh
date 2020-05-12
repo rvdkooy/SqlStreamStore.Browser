@@ -4,6 +4,7 @@ docker build --tag sssb-build .
 docker run --rm --name sssb-build \
  -v /var/run/docker.sock:/var/run/docker.sock \
  -v $PWD/artifacts:/repo/artifacts \
+ -v $PWD/.git:/.git \
  --network host \
  -e GITHUB_RUN_NUMBER=$GITHUB_RUN_NUMBER \
  -e FEEDZ_API_KEY=$FEEDZ_API_KEY \
