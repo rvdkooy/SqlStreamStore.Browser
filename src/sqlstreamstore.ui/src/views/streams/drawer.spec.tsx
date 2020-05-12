@@ -146,7 +146,7 @@ describe('message drawer specs', () => {
     jest.spyOn(halState, 'delete').mockResolvedValue(null);
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halState);
     const closeCallback = jest.fn();
-    jest.spyOn(snackBar, 'triggerMessage');
+    jest.spyOn(snackBar, 'triggerSuccessMessage');
 
     await act(async () => {
       const container = renderDrawerWithVersion(history, closeCallback);
@@ -158,10 +158,7 @@ describe('message drawer specs', () => {
       await wait(() => {
         expect(halState.delete).toHaveBeenCalled();
         expect(closeCallback).toHaveBeenCalledWith(true);
-        expect(snackBar.triggerMessage).toHaveBeenCalledWith({
-          message: 'Successfully deleted the message',
-          severity: 'success',
-        });
+        expect(snackBar.triggerSuccessMessage).toHaveBeenCalledWith('Successfully deleted the message');
       });
     });
   });
@@ -174,7 +171,7 @@ describe('message drawer specs', () => {
     jest.spyOn(halState, 'delete').mockRejectedValue(null);
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(halState);
     const closeButtonClicked = jest.fn();
-    jest.spyOn(snackBar, 'triggerMessage');
+    jest.spyOn(snackBar, 'triggerErrorMessage');
 
     await act(async () => {
       const container = renderDrawerWithVersion(history, closeButtonClicked);
@@ -187,10 +184,7 @@ describe('message drawer specs', () => {
       await wait(() => {
         expect(halState.delete).toHaveBeenCalled();
         expect(closeButtonClicked).not.toHaveBeenCalled();
-        expect(snackBar.triggerMessage).toHaveBeenCalledWith({
-          message: 'Couldn\'t delete the message',
-          severity: 'error',
-        });
+        expect(snackBar.triggerErrorMessage).toHaveBeenCalledWith('Couldn\'t delete the message');
       });
     });
   });

@@ -85,6 +85,31 @@ describe('Main specs', () => {
     });
   });
 
+  it('should fetch the streams again when querystring refresh=true', async () => {
+    jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(defaultHalresponse);
+
+    const history = createMemoryHistory()
+    history.push('/stream/1');
+
+    render(
+      <Router history={history}>
+        <Route path="/stream/:streamId?">
+          <Main />
+        </Route>
+      </Router>
+    );
+
+    await act(async () => {
+      await flushPromises();
+      history.push('/stream/1?refresh=true');
+      await flushPromises();
+
+      expect(halRestClient.fetchResource).toHaveBeenCalledTimes(2);
+      expect(halRestClient.fetchResource).toHaveBeenNthCalledWith(1, './stream/1');
+      expect(halRestClient.fetchResource).toHaveBeenNthCalledWith(2, './stream/1');
+    });
+  });
+
   it('should render an error message when fetching failed', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => { });
     jest.spyOn(halRestClient, 'fetchResource').mockRejectedValue('');
@@ -109,7 +134,7 @@ describe('Main specs', () => {
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(defaultHalresponse);
     jest.spyOn(defaultHalresponse, 'delete').mockResolvedValue(null);
     jest.spyOn(history, 'push');
-    jest.spyOn(snackBar, 'triggerMessage');
+    jest.spyOn(snackBar, 'triggerSuccessMessage');
 
     const container = render(
       <Router history={history}>
@@ -126,10 +151,7 @@ describe('Main specs', () => {
     await wait(() => {
       expect(defaultHalresponse.delete).toHaveBeenCalled();
       expect(history.push).toHaveBeenCalledWith('/stream');
-      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
-        message: 'Successfully deleted the stream',
-        severity: 'success',
-      });
+      expect(snackBar.triggerSuccessMessage).toHaveBeenCalledWith('Successfully deleted the stream');
     });
   });
 
@@ -141,7 +163,7 @@ describe('Main specs', () => {
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(defaultHalresponse);
     jest.spyOn(defaultHalresponse, 'delete').mockRejectedValue(null);
     jest.spyOn(history, 'push');
-    jest.spyOn(snackBar, 'triggerMessage');
+    jest.spyOn(snackBar, 'triggerErrorMessage');
 
     const container = render(
       <Router history={history}>
@@ -158,10 +180,7 @@ describe('Main specs', () => {
     await wait(() => {
       expect(defaultHalresponse.delete).toHaveBeenCalled();
       expect(history.push).toHaveBeenCalledWith('/stream');
-      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
-        message: 'Couldn\'t delete the stream',
-        severity: 'error',
-      });
+      expect(snackBar.triggerErrorMessage).toHaveBeenCalledWith('Couldn\'t delete the stream');
     });
   });
 
@@ -171,7 +190,7 @@ describe('Main specs', () => {
     defaultHalresponse.prop('streamStore:append', {});
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(defaultHalresponse);
     jest.spyOn(halRestClient, 'create').mockResolvedValue(null);
-    jest.spyOn(snackBar, 'triggerMessage');
+    jest.spyOn(snackBar, 'triggerSuccessMessage');
 
     const container = render(
       <Router history={history}>
@@ -189,10 +208,7 @@ describe('Main specs', () => {
     await flushPromises();
     await wait(() => {
       expect(halRestClient.create).toHaveBeenCalled();
-      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
-        message: 'Successfully appended a message to the stream',
-        severity: 'success',
-      });
+      expect(snackBar.triggerSuccessMessage).toHaveBeenCalledWith('Successfully appended a message to the stream');
     });
   });
 
@@ -202,7 +218,7 @@ describe('Main specs', () => {
     defaultHalresponse.prop('streamStore:append', {});
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(defaultHalresponse);
     jest.spyOn(halRestClient, 'create').mockRejectedValue(null);
-    jest.spyOn(snackBar, 'triggerMessage');
+    jest.spyOn(snackBar, 'triggerErrorMessage');
 
     const container = render(
       <Router history={history}>
@@ -220,10 +236,7 @@ describe('Main specs', () => {
     await flushPromises();
     await wait(() => {
       expect(halRestClient.create).toHaveBeenCalled();
-      expect(snackBar.triggerMessage).toHaveBeenCalledWith({
-        message: 'Couldn\'t append a message the to stream',
-        severity: 'error',
-      });
+      expect(snackBar.triggerErrorMessage).toHaveBeenCalledWith('Couldn\'t append a message the to stream');
     });
   });
 });
