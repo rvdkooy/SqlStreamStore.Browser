@@ -18,6 +18,7 @@ describe('message drawer specs', () => {
     halMessageResult.prop('createdUtc', 'createdUtc');
     halMessageResult.prop('type', 'type');
     halMessageResult.prop('payload', { foo: 'bar' });
+    halMessageResult.prop('metadata', { meta: 'data' });
     return halMessageResult;
   };
 
@@ -60,6 +61,11 @@ describe('message drawer specs', () => {
       expect(container.getByText('type')).toBeTruthy();
       expect(container.baseElement.innerHTML).toContain('foo');
       expect(container.baseElement.innerHTML).toContain('bar');
+
+      fireEvent.click(container.getByText('Metadata'));
+
+      expect(container.baseElement.innerHTML).toContain('meta');
+      expect(container.baseElement.innerHTML).toContain('data');
     });
   });
 
@@ -107,7 +113,7 @@ describe('message drawer specs', () => {
     });
   });
 
-  it('should show when the payload cannot be parsed', async () => {
+  it('should show when the payload OR metadata cannot be parsed', async () => {
     const invalidHalMessageWithoutPayload = new HalResource(halRestClient);
     jest.spyOn(console, 'warn').mockReturnValue();
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(invalidHalMessageWithoutPayload);
@@ -119,7 +125,11 @@ describe('message drawer specs', () => {
       const container = renderDrawerWithVersion(history, buttonClickSpy);
       await flushPromises();
 
-      expect(container.getByText('Unable to parse json data')).toBeTruthy();
+      expect(container.getByText('Unable to parse payload')).toBeTruthy();
+
+      fireEvent.click(container.getByText('Metadata'));
+
+      expect(container.getByText('Unable to parse metadata')).toBeTruthy();
     });
   });
 

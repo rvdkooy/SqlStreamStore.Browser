@@ -94,15 +94,19 @@ namespace SqlStreamStore.Browser.DevServer
 
         private static NewStreamMessage[] GenerateMessages(int messageCount)
             => Enumerable.Range(0, messageCount)
-                .Select(_ => new NewStreamMessage(
-                    Guid.NewGuid(),
-                    "test",
-                    $@"{{ ""foo"": ""{Guid.NewGuid()}"", ""baz"": {{  }}, ""qux"": [ {
+                .Select(_ => {
+                    var json = $@"{{ ""foo"": ""{Guid.NewGuid()}"", ""baz"": {{  }}, ""qux"": [ {
                             string.Join(", ",
                                 Enumerable
                                     .Range(0, messageCount).Select(max => s_random.Next(max)))
-                        } ] }}",
-                    "{}"))
+                        } ] }}";
+                    var jsonMeta = $@"{{ ""metafoo"": ""{Guid.NewGuid()}"", ""metabaz"": {{  }}, ""metaqux"": [ {
+                            string.Join(", ",
+                                Enumerable
+                                    .Range(0, messageCount).Select(max => s_random.Next(max)))
+                        } ] }}";
+                    return new NewStreamMessage(Guid.NewGuid(), "test", json, jsonMeta);
+                })
                 .ToArray();
         public void Dispose()
         {
