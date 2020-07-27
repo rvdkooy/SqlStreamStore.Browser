@@ -202,12 +202,18 @@ describe('Main specs', () => {
     await flushPromises();
     
     fireEvent.click(container.getByTestId('append-stream-button'));
-    fireEvent.change(document.querySelector('input[name="type"]') as HTMLInputElement, { target: { value: 'test' } })
-    fireEvent.change(document.querySelector('textarea[name="jsondata"]') as HTMLInputElement, { target: { value: '{ "foo": "baz" }' } })
+    fireEvent.change(document.querySelector('input[name="type"]') as HTMLInputElement, { target: { value: 'test' } });
+    fireEvent.change(document.querySelector('textarea[name="jsondata"]') as HTMLInputElement, { target: { value: '{ "foo": "baz" }' } });
+    fireEvent.change(document.querySelector('textarea[name="metadata"]') as HTMLInputElement, { target: { value: '{ "meta": "data" }' } });
     fireEvent.click(container.getByTestId('submit-button'));
     await flushPromises();
     await wait(() => {
-      expect(halRestClient.create).toHaveBeenCalled();
+      expect(halRestClient.create).toHaveBeenCalledWith('/', {
+        messageId: expect.any(String),
+        type: 'test',
+        jsonData: { foo: 'baz' },
+        metaData: { meta: 'data' },
+      });
       expect(snackBar.triggerSuccessMessage).toHaveBeenCalledWith('Successfully appended a message to the stream');
     });
   });

@@ -101,13 +101,14 @@ const StreamsView = () => {
     }
   };
 
-  const onConfirmSubmit = async (type: string, jsonData: string) => {
+  const onConfirmSubmit = async (type: string, jsonData: string, jsonMetadata?: string) => {
     try {
       if (state.halState) {
         await halClient.create(state.halState.uri.uri, {
           messageId: v4(),
           type,
           jsonData: JSON.parse(jsonData),
+          jsonMetadata: jsonMetadata ? JSON.parse(jsonMetadata) : null,
         });
         setState({ ...state, openAppendModal: false });
         triggerSuccessMessage('Successfully appended a message to the stream');
