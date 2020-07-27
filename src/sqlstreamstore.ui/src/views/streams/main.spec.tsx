@@ -212,7 +212,7 @@ describe('Main specs', () => {
         messageId: expect.any(String),
         type: 'test',
         jsonData: { foo: 'baz' },
-        metaData: { meta: 'data' },
+        jsonMetadata: { meta: 'data' },
       });
       expect(snackBar.triggerSuccessMessage).toHaveBeenCalledWith('Successfully appended a message to the stream');
     });

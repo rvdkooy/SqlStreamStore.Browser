@@ -7,7 +7,7 @@ import Box from '@material-ui/core/Box';
 import prettyPrintJson from 'pretty-print-json';
 import 'pretty-print-json/dist/pretty-print-json.css';
 import { HalResource } from 'hal-rest-client';
-import ErrorMessage from '../../components/messages/message';
+import Message from '../../components/messages/message';
 
 const useStyles = makeStyles((theme) => ({
   jsonData: {
@@ -28,7 +28,7 @@ interface Props {
 
 const MessageContent = (props: Props) => {
   let prettyPrintedJsonData;
-  let prettyPrintedJsonMetaData;
+  let prettyPrintedJsonMetaData: string;
 
   try {
     prettyPrintedJsonData = prettyPrintJson.toHtml(props.halResource.prop('payload'));
@@ -38,6 +38,17 @@ const MessageContent = (props: Props) => {
   }
   const [activeTab, updateActiveTab] = useState(0);
   const classes = useStyles();
+  
+  const renderMetaData = () => {
+    if (!props.halResource.prop('metadata')) {
+      return <div>No metadata available</div>
+    } else {
+      return (prettyPrintedJsonMetaData) ?
+        <pre dangerouslySetInnerHTML={{ __html: prettyPrintedJsonMetaData }}></pre> :
+        <Message severity="error" message="Unable to parse metadata" />
+    }
+  }
+  
   return (
     <div>
       <div className={classes.propertyBlock}>
@@ -75,15 +86,11 @@ const MessageContent = (props: Props) => {
             {
               (prettyPrintedJsonData) ?
                 <pre dangerouslySetInnerHTML={{ __html: prettyPrintedJsonData }}></pre> :
-                <ErrorMessage severity="error" message="Unable to parse payload" />
+                <Message severity="error" message="Unable to parse payload" />
             }
           </TabPanel>
           <TabPanel value={activeTab} index={1}>
-            {
-              (prettyPrintedJsonMetaData) ?
-                <pre dangerouslySetInnerHTML={{ __html: prettyPrintedJsonMetaData }}></pre> :
-                <ErrorMessage severity="error" message="Unable to parse metadata" />
-            }
+            { renderMetaData() }
           </TabPanel>
         </Paper>
       </div>

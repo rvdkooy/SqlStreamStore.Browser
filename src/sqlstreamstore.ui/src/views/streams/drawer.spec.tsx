@@ -115,6 +115,7 @@ describe('message drawer specs', () => {
 
   it('should show when the payload OR metadata cannot be parsed', async () => {
     const invalidHalMessageWithoutPayload = new HalResource(halRestClient);
+    invalidHalMessageWithoutPayload.prop('metadata', 'invalidjson')
     jest.spyOn(console, 'warn').mockReturnValue();
     jest.spyOn(halRestClient, 'fetchResource').mockResolvedValue(invalidHalMessageWithoutPayload);
     const buttonClickSpy = jest.fn();
