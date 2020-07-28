@@ -11,7 +11,7 @@ import Message from '../../components/messages/message';
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSubmit: (type: string, jsonData: string) => void;
+  onSubmit: (type: string, jsonData: string, metaData?: string) => void;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -38,6 +38,9 @@ const AppendToStreamModal = (props: Props) => {
   const [ jsonData, updateJsonData ] = useState('');
   const [ jsonValid, updateJsonValid ] = useState(true);
 
+  const [ metaData, updateMetaData ] = useState('');
+  const [ metaValid, updateMetaValid ] = useState(true);
+
   const onUpdateJsonData = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!jsonValid) {
       const valid = isValidJson(e.target.value);
@@ -46,11 +49,19 @@ const AppendToStreamModal = (props: Props) => {
     updateJsonData(e.target.value);
   };
 
+  const onUpdateMetaData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!metaValid) {
+      const valid = isValidJson(e.target.value);
+      updateMetaValid(valid);
+    }
+    updateMetaData(e.target.value);
+  };
+
   const onSubmit = () => {
     const valid = isValidJson(jsonData);
     updateJsonValid(valid);
     if (valid) {
-      props.onSubmit(type, jsonData);
+      props.onSubmit(type, jsonData, metaData);
     }
   };
 
@@ -83,6 +94,21 @@ const AppendToStreamModal = (props: Props) => {
             value={jsonData}
             onChange={onUpdateJsonData}
             variant="outlined"
+          />
+          {
+            (!jsonValid) ? <Message severity="warning" message="Invalid json" /> : null
+          }
+          <TextField
+            className={classes.formControl}
+            id="metadata"
+            name="metadata"
+            label="Meta data"
+            multiline
+            rows={8}
+            value={metaData}
+            onChange={onUpdateMetaData}
+            variant="outlined"
+            placeholder="Meta data is optional"
           />
           {
             (!jsonValid) ? <Message severity="warning" message="Invalid json" /> : null

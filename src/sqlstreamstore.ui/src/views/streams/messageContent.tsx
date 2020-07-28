@@ -1,15 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
+import Box from '@material-ui/core/Box';
 import prettyPrintJson from 'pretty-print-json';
 import 'pretty-print-json/dist/pretty-print-json.css';
 import { HalResource } from 'hal-rest-client';
-import ErrorMessage from '../../components/messages/message';
+import Message from '../../components/messages/message';
 
 const useStyles = makeStyles((theme) => ({
   jsonData: {
     padding: 10,
     fontSize: theme.typography.fontSize,
+  },
+  tabs: {
+    marginTop: 30,
   },
   propertyBlock: {
     marginBottom: '8px',
@@ -22,14 +28,27 @@ interface Props {
 
 const MessageContent = (props: Props) => {
   let prettyPrintedJsonData;
+  let prettyPrintedJsonMetaData: string;
 
   try {
     prettyPrintedJsonData = prettyPrintJson.toHtml(props.halResource.prop('payload'));
+    prettyPrintedJsonMetaData = prettyPrintJson.toHtml(props.halResource.prop('metadata'));
   } catch (err) {
     console.warn(err);
   }
-
+  const [activeTab, updateActiveTab] = useState(0);
   const classes = useStyles();
+  
+  const renderMetaData = () => {
+    if (!props.halResource.prop('metadata')) {
+      return <div>No metadata available</div>
+    } else {
+      return (prettyPrintedJsonMetaData) ?
+        <pre dangerouslySetInnerHTML={{ __html: prettyPrintedJsonMetaData }}></pre> :
+        <Message severity="error" message="Unable to parse metadata" />
+    }
+  }
+  
   return (
     <div>
       <div className={classes.propertyBlock}>
@@ -48,16 +67,52 @@ const MessageContent = (props: Props) => {
         <Typography variant="h6">Type:</Typography>
         <Typography>{props.halResource.prop('type')}</Typography>
       </div>
+
       <div className={classes.propertyBlock}>
-        <Typography variant="h6">Json Data:</Typography>
+      <Paper square className={classes.tabs}>
+          <Tabs
+            value={activeTab}
+            onChange={(_, newValue) => updateActiveTab(newValue)}
+            variant="fullWidth"
+            textColor="primary"
+            indicatorColor="primary"
+          >
+            <Tab label="Payload" />
+            <Tab label="Metadata" />
+          </Tabs>
+        </Paper>
         <Paper className={classes.jsonData}>
-          {
-            (prettyPrintedJsonData) ?
-            <pre dangerouslySetInnerHTML={{ __html: prettyPrintedJsonData }}></pre> :
-              <ErrorMessage severity="error" message="Unable to parse json data" />
-          }
+          <TabPanel value={activeTab} index={0}>
+            {
+              (prettyPrintedJsonData) ?
+                <pre dangerouslySetInnerHTML={{ __html: prettyPrintedJsonData }}></pre> :
+                <Message severity="error" message="Unable to parse payload" />
+            }
+          </TabPanel>
+          <TabPanel value={activeTab} index={1}>
+            { renderMetaData() }
+          </TabPanel>
         </Paper>
       </div>
+    </div>
+  );
+}
+
+function TabPanel(props: { children: JSX.Element | JSX.Element[], value: number, index: number }) {
+  const { children, value, index } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+    >
+      {value === index && (
+        <Box p={3}>
+          {children}
+        </Box>
+      )}
     </div>
   );
 }

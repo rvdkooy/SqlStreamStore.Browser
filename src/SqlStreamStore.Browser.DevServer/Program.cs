@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using SqlStreamStore.Streams;
+using SqlStreamStore.Browser.DevServer.ExtensionMethods;
 
 namespace SqlStreamStore.Browser.DevServer
 {
@@ -72,26 +74,39 @@ namespace SqlStreamStore.Browser.DevServer
         private static void Write(IStreamStore streamStore, int messageCount, int streamCount)
         {
             var streams = Enumerable.Range(0, streamCount).Select(_ => $"test-{Guid.NewGuid():n}").ToList();
-
-            Task.Run(() => Task.WhenAll(
-                from streamId in streams
-                select streamStore.AppendToStream(
-                    streamId,
-                    ExpectedVersion.NoStream,
-                    GenerateMessages(messageCount))));
+            
+            IList<Func<Task>> tasks = new List<Func<Task>>();;
+            for (int i = 0; i < streams.Count; i++)
+            {
+                var streamId = streams[i];
+                var messages = GenerateMessages(messageCount);
+                foreach (var message in messages)
+                {
+                    tasks.Add(() => streamStore.AppendToStream(streamId, ExpectedVersion.Any, new[] { message }));
+                }
+                
+                var oneMonthInSeconds = 2629743;
+                tasks.Add(() => streamStore.SetStreamMetadata(streamId, ExpectedVersion.Any, oneMonthInSeconds, 100, $@"{{ ""foo"": ""baz"" }}"));
+            }
+            tasks.Shuffle();
+            Task.Run(() => Task.WhenAll(tasks.Select(t => t())));
         }
 
         private static NewStreamMessage[] GenerateMessages(int messageCount)
             => Enumerable.Range(0, messageCount)
-                .Select(_ => new NewStreamMessage(
-                    Guid.NewGuid(),
-                    "test",
-                    $@"{{ ""foo"": ""{Guid.NewGuid()}"", ""baz"": {{  }}, ""qux"": [ {
+                .Select(_ => {
+                    var json = $@"{{ ""foo"": ""{Guid.NewGuid()}"", ""baz"": {{  }}, ""qux"": [ {
                             string.Join(", ",
                                 Enumerable
                                     .Range(0, messageCount).Select(max => s_random.Next(max)))
-                        } ] }}",
-                    "{}"))
+                        } ] }}";
+                    var jsonMeta = $@"{{ ""metafoo"": ""{Guid.NewGuid()}"", ""metabaz"": {{  }}, ""metaqux"": [ {
+                            string.Join(", ",
+                                Enumerable
+                                    .Range(0, messageCount).Select(max => s_random.Next(max)))
+                        } ] }}";
+                    return new NewStreamMessage(Guid.NewGuid(), "test", json, jsonMeta);
+                })
                 .ToArray();
         public void Dispose()
         {

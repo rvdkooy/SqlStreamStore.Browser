@@ -2,6 +2,7 @@ import React from 'react';
 import { Alert, AlertTitle, Color } from '@material-ui/lab';
 
 interface Props {
+  title?: string;
   message: string;
   severity: Color;
 }
@@ -9,7 +10,7 @@ interface Props {
 const ErrorMessage = (props: Props) => {
   return (
     <Alert severity={props.severity}>
-      <AlertTitle>Error</AlertTitle>
+      <AlertTitle>{ props.title || 'Error' }</AlertTitle>
       <p>{ props.message }</p>
     </Alert>
   );
