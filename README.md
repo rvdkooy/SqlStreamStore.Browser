@@ -9,6 +9,8 @@
 Nuget:
 
 ``` shell
+
+dotnet nuget add source https://f.feedz.io/logicality/streamstore-ci/nuget -n streamstore
 dotnet package add SqlStreamStore.Browser
 ```
 
