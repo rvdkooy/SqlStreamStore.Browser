@@ -25,7 +25,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddSingleton(streamStoreInstance);
+    services.AddSingleton<IStreamStore>(streamStoreInstance);
     services.AddSqlStreamStoreBrowser();
 }
 
