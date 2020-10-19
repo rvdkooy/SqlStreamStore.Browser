@@ -15,7 +15,7 @@
     <MinVerBuildMetadata>build.$(GITHUB_RUN_NUMBER)</MinVerBuildMetadata>
     <DebugType>full</DebugType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <AllowedOutputExtensionsInPackageBuaildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <MinVerVerbosity>diagnostic</MinVerVerbosity>
   </PropertyGroup>
   <ItemGroup>
