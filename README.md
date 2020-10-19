@@ -20,11 +20,12 @@ Startup
 
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
-    app.UseSqlStreamStoreBrowser(streamStoreInstance);
+    app.UseSqlStreamStoreBrowser();
 }
 
 public void ConfigureServices(IServiceCollection services)
 {
+    services.AddSingleton(streamStoreInstance);
     services.AddSqlStreamStoreBrowser();
 }
 

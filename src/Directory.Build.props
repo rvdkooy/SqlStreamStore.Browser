@@ -10,7 +10,7 @@
     <LangVersion>7.3</LangVersion>
     <MinVerTagPrefix>v</MinVerTagPrefix>
     <MinVerDefaultPreReleasePhase>preview</MinVerDefaultPreReleasePhase>
-    <MinVerMinimumMajorMinor>0.3</MinVerMinimumMajorMinor>
+    <MinVerMinimumMajorMinor>0.4</MinVerMinimumMajorMinor>
     <GITHUB_RUN_NUMBER Condition="'$(GITHUB_RUN_NUMBER)' == ''">0</GITHUB_RUN_NUMBER>
     <MinVerBuildMetadata>build.$(GITHUB_RUN_NUMBER)</MinVerBuildMetadata>
     <DebugType>full</DebugType>

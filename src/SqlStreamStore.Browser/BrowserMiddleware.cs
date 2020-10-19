@@ -10,10 +10,7 @@ namespace SqlStreamStore.Browser
 {
     public static class BrowserStartup
     {
-        public static IApplicationBuilder UseSqlStreamStoreBrowser(
-            this IApplicationBuilder builder,
-            IStreamStore streamStore
-        )
+       public static IApplicationBuilder UseSqlStreamStoreBrowser(this IApplicationBuilder builder)
         {
             if(builder == null)
                 throw new ArgumentNullException(nameof(builder));
@@ -23,6 +20,12 @@ namespace SqlStreamStore.Browser
             string currentDir = Path.GetDirectoryName(currentAssembly.Location);
             
             var staticFilesDir = Path.Combine(currentDir, "../../../../sqlstreamstore.ui/build");
+
+            var streamStore = builder.ApplicationServices.GetService<IStreamStore>();
+            if (streamStore == null)
+            {
+                throw new NullReferenceException("No StreamStore instance found.");
+            }
 
             return builder
                 .Map("/hal", innerBuilder =>
